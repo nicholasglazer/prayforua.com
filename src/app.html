@@ -1,12 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
-		<meta name="viewport" content="width=device-width" />
-		%sveltekit.head%
-	</head>
-	<body data-sveltekit-preload-data="hover">
-		<div style="display: contents">%sveltekit.body%</div>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+    <meta name="viewport" content="width=device-width" />
+    %sveltekit.head%
+    <style>
+      :root {
+        /* github.com/miozutheme/css */
+        --base1: #232733; /* Miozu00 | background*/
+        --base2: #2c3040; /* Miozu01 | lighter background*/
+        --base3: #3e4359; /* Miozu02 */
+        --base4: #565e78; /* Miozu03 | comments */
+        --base5: #737e99; /* Miozu04 | alternative foreground*/
+        --base6: #d0d2db; /* Miozu05 */
+        --base7: #f3f4f7; /* Miozu06 | foreground */
+        --base8: #fafdfb; /* Miozu07 | lighter foreground */
+        --red: #eb3137; /* Miozu14 | error */
+        --orange: #ff9837; /* Miozu13 | numbers */
+        --green: #6dd672; /* Miozu11 | success */
+        --yellow: #e8d176; /* Miozu10 | warnings */
+        --blue: #83d2fc; /* Miozu12 | constants, operators */
+        --magenta: #c974e6; /* Miozu08 | functions*/
+        --peach: #ff9982; /* Miozu09 | keywords */
+        --cyan: #40ffe2; /* Miozu15 | methods */
+      }
+    </style>
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
 </html>
