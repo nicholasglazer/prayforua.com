@@ -1,4 +1,6 @@
 <script>
+ import {onMount} from 'svelte';
+ import {auth} from '$stores/authStore';
  import F6 from '$lib/assets/parallax/F0.png';
  import F0 from '$lib/assets/parallax/F1.png';
  import F1 from '$lib/assets/parallax/F2.png';
@@ -7,6 +9,9 @@
  import F4 from '$lib/assets/parallax/F5.png';
  import F5 from '$lib/assets/parallax/F6.png';
  import '../styles/app.css';
+
+ onMount(() => auth.useLocalStorage());
+
  const ls = [
      [0, F6, 100, 0, 0],
      [1, F0, 99, 0, 0],
@@ -23,7 +28,6 @@
  let x;
  let scale = 1;
  let containerWidth = 100;
-
 
  const scalingSteps = 100;
  let scrollingFactor = 0.1;
@@ -63,6 +67,7 @@
 <svelte:window bind:innerWidth bind:innerHeight bind:scrollY={y} on:mousemove={e => x = e.clientX} />
 
 <main style="background: #14232A;">
+    <div on:click={auth.googleSignIn}>{$auth?.user.name || "Sign in"}</div>
     <div class="parallax-container" style="width: {containerWidth}%">
         {#each ls as l}
             <img
