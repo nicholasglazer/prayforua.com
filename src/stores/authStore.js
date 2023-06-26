@@ -1,7 +1,9 @@
 import {writable} from 'svelte/store';
 import {browser} from '$app/environment';
-import isMobile from '$utils/isMobile';
-import {firebaseKeys} from '$utils/firebaseConfig';
+import isMobile from '$lib/utils/isMobile';
+import {initializeApp} from 'firebase/app';
+import {firebaseKeys} from '$lib/firebase/config';
+
 import {
   getAuth,
   signOut,
@@ -10,30 +12,31 @@ import {
   GoogleAuthProvider,
   getAdditionalUserInfo
 } from 'firebase/auth';
-import {initializeApp} from 'firebase/app';
 
 const initialState = {
   isNewUser: false,
   isAuthenticated: false,
   providerId: null,
-  user: {}
+  user: null,
+  flow: {
+    user: null,
+    profile: null
+  }
 };
 
 function createAuth(key) {
-  // const initialValue =
-  //   browser && localStorage.getItem(key)
-  //     ? JSON.parse(localStorage.getItem(key))
-  //     : initialState;
-  const storedValue = browser ? localStorage.getItem(key) : null;
-  const initialValue = storedValue ? JSON.parse(storedValue) : initialState;
+  const initialValue =
+    browser && localStorage.getItem(key)
+      ? JSON.parse(localStorage.getItem(key))
+      : initialState;
 
   const {subscribe, update} = writable(initialValue);
+  const ini = initializeApp(firebaseKeys);
+  const auth = getAuth(ini);
 
   return {
     subscribe,
     googleSignIn: async () => {
-      const ini = initializeApp(firebaseKeys);
-      const auth = getAuth(ini);
       const provider = new GoogleAuthProvider();
       try {
         if (isMobile) {
@@ -66,7 +69,7 @@ function createAuth(key) {
     },
     googleSignOut: async () => {
       try {
-        await signOut(auth);
+        signOut(auth);
         update((prev) => ({
           ...prev,
           isAuthenticated: false,
@@ -77,6 +80,33 @@ function createAuth(key) {
         console.error('Google sign-out error:', error);
         throw error;
       }
+    },
+    assignFlowAccount: (payload) => {
+      update((prev) => ({
+        ...prev,
+        flow: {
+          ...prev.flow,
+          user: payload
+        }
+      }));
+    },
+    assignFlowProfile: (payload) => {
+      update((prev) => ({
+        ...prev,
+        flow: {
+          ...prev.flow,
+          profile: payload
+        }
+      }));
+    },
+    unauthenticateFlowAccount: () => {
+      update((prev) => ({
+        ...prev,
+        flow: {
+          user: null,
+          profile: null
+        }
+      }));
     },
     useLocalStorage: () => {
       subscribe((current) => {

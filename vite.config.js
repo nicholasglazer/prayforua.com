@@ -6,9 +6,7 @@ export default defineConfig({
   resolve: {
     alias: {
       $stores: path.resolve('./src/stores/'),
-      $components: path.resolve('./src/components/'),
-      $features: path.resolve('./src/features/'),
-      $utils: path.resolve('./src/utils/')
+      $components: path.resolve('./src/components/')
     }
   },
   plugins: [sveltekit()]
