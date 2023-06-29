@@ -1,5 +1,4 @@
 <script>
- import Header from '$components/Header.svelte';
  import F6 from '$lib/assets/parallax/F0.png';
  import F0 from '$lib/assets/parallax/F1.png';
  import F1 from '$lib/assets/parallax/F2.png';
@@ -63,7 +62,6 @@
 
 <svelte:window bind:innerWidth bind:innerHeight bind:scrollY={y} on:mousemove={e => x = e.clientX} />
 
-<Header />
 <main style="background: #14232A;">
     <div class="parallax-container" style="width: {containerWidth}%">
         {#each ls as l}

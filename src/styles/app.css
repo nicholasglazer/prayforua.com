@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.drawer-side {
+  @apply ease-out duration-200;
+}

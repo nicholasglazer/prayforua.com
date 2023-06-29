@@ -17,10 +17,33 @@ const initialState = {
   isNewUser: false,
   isAuthenticated: false,
   providerId: null,
-  user: null,
+  user: {
+    id: '',
+    firstName: '',
+    lastName: '',
+    occupation: '',
+    country: '',
+    city: '',
+    website: '',
+    bio: '',
+    social: {
+      Discord: '',
+      Facebook: '',
+      Github: '',
+      Instagram: '',
+      Linkedin: '',
+      Telegram: '',
+      Twitter: '',
+      Youtube: ''
+    }
+  },
+  google: {
+    profile: null
+  },
   flow: {
     user: null,
-    profile: null
+    profile: null,
+    flowProfileStatus: null
   }
 };
 
@@ -30,37 +53,43 @@ function createAuth(key) {
       ? JSON.parse(localStorage.getItem(key))
       : initialState;
 
-  const {subscribe, update} = writable(initialValue);
+  const {subscribe, set, update} = writable(initialValue);
   const ini = initializeApp(firebaseKeys);
   const auth = getAuth(ini);
 
+  function updateGoogleProfile(result) {
+    const {isNewUser, profile, providerId} = getAdditionalUserInfo(result);
+    update((prev) => ({
+      ...prev,
+      google: {profile},
+      isNewUser,
+      providerId,
+      isAuthenticated: true
+    }));
+    if (isNewUser) {
+      update((prev) => ({
+        ...prev,
+        user: {
+          ...prev.user,
+          id: profile.id,
+          firstName: profile.given_name,
+          lastName: profile.family_name
+        }
+      }));
+    }
+  }
   return {
+    set,
     subscribe,
     googleSignIn: async () => {
       const provider = new GoogleAuthProvider();
       try {
         if (isMobile) {
           const result = await signInWithRedirect(auth, provider);
-          const {isNewUser, profile, providerId} =
-            getAdditionalUserInfo(result);
-          update((prev) => ({
-            ...prev,
-            user: {...profile},
-            isNewUser,
-            providerId,
-            isAuthenticated: true
-          }));
+          updateGoogleProfile(result);
         } else {
           const result = await signInWithPopup(auth, provider);
-          const {isNewUser, profile, providerId} =
-            getAdditionalUserInfo(result);
-          update((prev) => ({
-            ...prev,
-            user: {...profile},
-            isNewUser,
-            providerId,
-            isAuthenticated: true
-          }));
+          updateGoogleProfile(result);
         }
       } catch (error) {
         console.error('Google sign-in error:', error);
@@ -73,7 +102,7 @@ function createAuth(key) {
         update((prev) => ({
           ...prev,
           isAuthenticated: false,
-          user: {},
+          google: {profile: {}},
           providerId: null
         }));
       } catch (error) {
@@ -99,14 +128,61 @@ function createAuth(key) {
         }
       }));
     },
+    isFlowProfileCreated: (payload) => {
+      update((prev) => ({
+        ...prev,
+        flow: {
+          ...prev.flow,
+          flowProfileStatus: payload
+        }
+      }));
+    },
     unauthenticateFlowAccount: () => {
       update((prev) => ({
         ...prev,
         flow: {
+          ...prev.flow,
           user: null,
           profile: null
         }
       }));
+    },
+    updateFlowProfile: (payload) => {
+      update((prev) => ({
+        ...prev,
+        flow: {
+          ...prev.flow,
+          profile: {
+            ...prev.flow.profile,
+            ...payload
+          }
+        }
+      }));
+    },
+    updateUserBaseProfile: (payload) => {
+      update((prev) => {
+        return {
+          ...prev,
+          user: {
+            ...prev.user,
+            ...payload
+          }
+        };
+      });
+    },
+    updateUserLinks: (payload) => {
+      update((prev) => {
+        return {
+          ...prev,
+          user: {
+            ...prev.user,
+            social: {
+              ...prev.user.social,
+              ...payload
+            }
+          }
+        };
+      });
     },
     useLocalStorage: () => {
       subscribe((current) => {

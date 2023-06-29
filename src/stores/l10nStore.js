@@ -5,8 +5,8 @@ import {browser} from '$app/environment';
 const initialState = 'en';
 
 export const locales = [
-  ['en', 'english', '🇺🇸'],
-  ['ua', 'українська', '🇺🇦']
+  ['en', 'English', '🇺🇸'],
+  ['ua', 'Українська', '🇺🇦']
 ];
 
 function translate(locale, key, vars) {

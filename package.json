@@ -29,6 +29,7 @@
     "@auth/core": "^0.8.4",
     "@auth/sveltekit": "^0.3.3",
     "@onflow/fcl": "^1.4.1",
-    "firebase": "^9.23.0"
+    "firebase": "^9.23.0",
+    "ramda": "^0.29.0"
   }
 }
