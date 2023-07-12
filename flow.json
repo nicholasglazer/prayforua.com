@@ -1,0 +1,80 @@
+{
+  "contracts": {
+    "NFTStorefrontV2": {
+      "source": "./contracts/NFTStorefrontV2.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7",
+        "testnet": "0xe1ce55a0609b04a6"
+      }
+    },
+    "ViewResolver": {
+      "source": "./contracts/utility/ViewResolver.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7",
+        "testnet": "0xe1ce55a0609b04a6"
+      }
+    },
+    "MetadataViews": {
+      "source": "./contracts/utility/MetadataViews.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7",
+        "testnet": "0xe1ce55a0609b04a6"
+      }
+    },
+    "ExampleNFT": {
+      "source": "./contracts/utility/ExampleNFT.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7",
+        "testnet": "0xe1ce55a0609b04a6"
+      }
+    },
+    "FungibleToken": {
+      "source": "./contracts/utility/FungibleToken.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7",
+        "testnet": "0xe1ce55a0609b04a6"
+      }
+    },
+    "NonFungibleToken": {
+      "source": "./contracts/utility/NonFungibleToken.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7",
+        "testnet": "0xe1ce55a0609b04a6"
+      }
+    },
+    "NFTCatalog": {
+      "source": "./contracts/utility/NFTCatalog.cdc",
+      "aliases": {
+        "emulator": "0xf8d6e0586b0a20c7",
+        "testnet": "0xe1ce55a0609b04a6"
+      }
+    }
+  },
+  "networks": {
+    "emulator": "127.0.0.1:3569",
+    "mainnet": "access.mainnet.nodes.onflow.org:9000",
+    "testnet": "access.devnet.nodes.onflow.org:9000"
+  },
+  "accounts": {
+    "admin": {
+      "address": "e1ce55a0609b04a6",
+      "key": "059b2fd594be1359db98ae1f14006cf3884cf8c854270cca55fa76b68dac58f3"
+    },
+    "emulator-account": {
+      "address": "f8d6e0586b0a20c7",
+      "key": "392cfe2147b25d52f241ec050bee069079bb3a3dac012dc73550dbdd0c91937a"
+    }
+  },
+  "deployments": {
+    "testnet": {
+      "admin": [
+        "NFTStorefrontV2",
+        "FungibleToken",
+        "NonFungibleToken",
+        "ViewResolver",
+        "MetadataViews",
+        "ExampleNFT"
+      ]
+    }
+  }
+}
