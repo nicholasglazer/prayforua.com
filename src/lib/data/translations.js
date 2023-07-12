@@ -1,5 +1,6 @@
 export default {
   en: {
+    'general.close': 'Close',
     'header.logo': 'prayforua.com',
     'header.login': 'Sign in',
     'header.logout': 'Log out',
@@ -7,6 +8,15 @@ export default {
     'route.account': 'Account',
     'route.projects': 'Projects',
     'user.edit': 'Edit profile',
+    'user.add': 'Add',
+    'project.by': 'by',
+    'user.project.edit': 'Edit project',
+    'user.createProject': 'Create new project',
+    'user.createProject.generalSettings': 'General settings',
+    'user.createProject.title': 'Project title',
+    'user.createProject.description': 'Project description',
+    'user.createProject.coverImage': 'Cover image',
+    'user.createProject.goal': 'Your charity goal in usd',
     'user.navTitle': 'Account navigation',
     'user.settings.connectWallet': 'Connect flow wallet',
     'user.settings.connectDescription':
@@ -27,6 +37,9 @@ export default {
     'user.edit.link': 'Link',
     'user.edit.flowNotConnected':
       'To be able to edit flow profile, <a class="link" href="/user/settings"/>connect flow wallet</a>',
+    'user.edit.flowCreateStorefront': 'Create a project',
+    'user.edit.flowCreateStorefrontDescription':
+      'This will allow you to create a project',
     'user.edit.flowCreateProfile': 'Create Flow profile',
     'user.edit.flowCreateProfileDescription':
       'This will create your Flow blockchain profile in network by sending free transaction',
@@ -46,6 +59,7 @@ export default {
     'route.settings': 'Налаштування',
     'route.account': 'Профіль',
     'route.projects': 'Проекти',
+    'project.by': 'от',
     'user.navTitle': 'Навігація аккаунту',
     'user.edit': 'Редагувати профіль',
     'user.settings.connectWallet': 'Приєднати гаманець Flow',

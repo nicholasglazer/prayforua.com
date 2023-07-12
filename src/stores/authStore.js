@@ -3,6 +3,7 @@ import {browser} from '$app/environment';
 import isMobile from '$lib/utils/isMobile';
 import {initializeApp} from 'firebase/app';
 import {firebaseKeys} from '$lib/firebase/config';
+import {db} from '$stores/dbStore';
 
 import {
   getAuth,
@@ -35,6 +36,10 @@ const initialState = {
       Telegram: '',
       Twitter: '',
       Youtube: ''
+    },
+    other: {
+      Monobank: '',
+      Privatbank: ''
     }
   },
   google: {
@@ -48,6 +53,10 @@ const initialState = {
 };
 
 function createAuth(key) {
+  console.log(
+    'browser && localStorage.getItem(key)',
+    browser && localStorage.getItem(key)
+  );
   const initialValue =
     browser && localStorage.getItem(key)
       ? JSON.parse(localStorage.getItem(key))
@@ -66,7 +75,7 @@ function createAuth(key) {
       providerId,
       isAuthenticated: true
     }));
-    if (isNewUser) {
+    if (!isNewUser) {
       update((prev) => ({
         ...prev,
         user: {
@@ -76,6 +85,23 @@ function createAuth(key) {
           lastName: profile.family_name
         }
       }));
+      db.setDoc('users', profile.id, {
+        providerId,
+        user: {
+          ...initialState.user,
+          id: profile.id,
+          firstName: profile.given_name,
+          lastName: profile.family_name
+        },
+        google: {
+          profile
+        },
+        flow: {
+          user: null,
+          profile: null,
+          flowProfileStatus: null
+        }
+      });
     }
   }
   return {

@@ -2,7 +2,7 @@
  import {auth} from '$stores/authStore';
  import {t} from '$stores/l10nStore';
  import {countryList} from '$lib/data/countries'
- import {sendProfileQuery, initFlowProfile, mutateFlowProfile} from '$lib/flow/actions'
+ import {sendProfileQuery, initFlowProfile, mutateFlowProfile, sendStorefrontQuery, initFlowStorefront} from '$lib/flow/actions'
  import InstagramIcon from '$components/icons/Instagram.svelte';
  import DiscordIcon from '$components/icons/Discord.svelte';
  import TwitterIcon from '$components/icons/Twitter.svelte';
@@ -43,7 +43,7 @@
     <small class="mr-4 font-semibold">
         {$t('user.edit.editState')}
     </small>
-    <a class="btn btn-accent btn-sm" href="/user">
+    <a class="btn btn-ghost btn-outline btn-sm" href="/user">
         {$t('user.edit.backBtn')}
     </a>
 </div>
@@ -113,10 +113,11 @@
         <kbd id="flow-address-settings" class="kbd w-full mb-4">
             {$auth.flow.user?.addr}
         </kbd>
-        {#if $auth.flow.flowProfileStatus !== 4}
+        {#if $auth.flow.flowProfileStatus === 4}
             <div class="flex justify-between">
                 <label for="load-flow-profile" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.edit.flowCreateProfileDescription')}:</label>
                 <button class="btn btn-sm btn-accent" on:click="{initFlowProfile}">{$t('user.edit.flowCreateProfile')}</button>
+                <button id="" class="btn btn-sm btn-accent" on:click="{sendStorefrontQuery($auth.flow.user.addr)}">test</button>
             </div>
         {/if}
         {#if $auth.flow.flowProfileStatus === 4 && !$auth.flow.profile?.name}
@@ -125,6 +126,13 @@
                 <button id="load-flow-profile" class="btn btn-sm btn-accent" on:click="{sendProfileQuery($auth.flow.user.addr)}">{$t('user.edit.flowLoadProfile')}</button>
             </div>
 
+        {/if}
+
+        {#if $auth.flow.flowProfileStatus === 4 && $auth.flow.profile?.name}
+            <div class="flex justify-between">
+                <label for="load-flow-profile" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.edit.flowCreateProfileDescription')}:</label>
+                <button class="btn btn-sm btn-accent" on:click="{initFlowStorefront}">{$t('user.edit.flowCreateStorefront')}</button>
+            </div>
         {/if}
         {#if $auth.flow.flowProfileStatus === 4 && $auth.flow.profile?.name}
             <div class="flex max-md:flex-col">
@@ -141,6 +149,8 @@
                 <label for="flow-bio" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.edit.flowBio')}</label>
                 <textarea id="flow-bio" bind:value="{$auth.flow.profile.info}" on:input="{(e) => updateFlowProfile({info: e.target.value})}" placeholder="" class="textarea textarea-bordered font-bold textarea-md w-full" />
             </div>
+
+
             <button class="btn btn-sm bg-green ml-auto mt-4 ml-auto" on:click="{mutateFlowProfile}">{$t('user.edit.flowUpdateProfile')}</button>
         {/if}
     {:else}
