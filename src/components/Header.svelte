@@ -2,6 +2,7 @@
  import {t} from '$stores/l10nStore';
  import {auth} from '$stores/authStore';
  import isMobile from '$lib/utils/isMobile';
+ import Logo from "$lib/assets/logo64.png"
  import Drawer from '$components/Drawer.svelte';
  import IconMenu from '$components/IconMenu.svelte';
  import Locales from '$components/Locales.svelte';
@@ -20,7 +21,7 @@
     <div class="flex-1 px-2 lg:flex-none">
         <a href="/" class="text-lg font-bold max-md:hidden">{$t('header.logo')}</a>
         <a href="/" class="md:hidden">
-            <img src="/src/lib/assets/logo64.png" alt="" class="w-10 h-10" />
+            <img src="{Logo}" alt="" class="w-10 h-10" />
         </a>
     </div>
     <div class="ml-auto">
