@@ -26,6 +26,7 @@
      }
      return s;
  };
+ $: user = $auth.user;
 </script>
 
 <div class="w-full my-8">
@@ -33,31 +34,31 @@
         <div class="flex flex-col flex-1">
             <div class="flex mb-1">
                 <h3 class="text-2xl font-bold mr-1.5">
-                    {$auth.user.firstName ?? 'User'}
+                    {user.firstName ?? 'User'}
                 </h3>
                 <h3 class="text-2xl font-bold">
-                    {$auth.user.lastName ?? ''}
+                    {user.lastName ?? ''}
                 </h3>
             </div>
             <small class="font-semibold text-sm">
                 {$auth.google.profile?.email ?? 'useremail@examaple.com'}
             </small>
             <small class="font-semibold">
-                {$auth.user.occupation ?? ''}
+                {user.occupation ?? ''}
             </small>
             <div class="flex mb-1.5">
                 <small class="font-semibold">
-                    {$auth.user.city ?? ''}
+                    {user.city ?? ''}
                 </small>
                 <small class="font-semibold">
-                    {#if $auth.user.country}
+                    {#if user.country}
                         ,
                     {/if}
-                    {$auth.user.country ?? ''}
+                    {user.country ?? ''}
                 </small>
             </div>
             <div class="max-w-lg">
-                {$auth.user.bio ?? 'Your bio...'}
+                {user.bio ?? 'Your bio...'}
             </div>
         </div>
         <div class="flex flex-wrap flex-initial justify-center items-center w-[100px]">
@@ -74,13 +75,13 @@
         </div>
     </div>
     <div class="flex justify-between mt-4">
-        {#if $auth.user.website}
-            <a class="text-base4 text-sm" target="_blank" href="{$auth.user.website}">
-                {$auth.user.website ?? ''}
+        {#if user.website}
+            <a class="text-base4 text-sm" target="_blank" href="{user.website}">
+                {user.website ?? ''}
             </a>
         {/if}
         <div class="flex">
-            {#each Object.entries($auth.user.social) as s (s[0])}
+            {#each Object.entries(user.social) as s (s[0])}
                 {#if s[1]}
                     <div class="flex items-center">
                         <a href="{checkLink(s[1])}" target="_blank" class="w-5 mr-1">

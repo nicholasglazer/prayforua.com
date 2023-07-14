@@ -1,10 +1,15 @@
 <script>
- import {project} from '$stores/projectStore';
+ import {project, currencyGoal} from '$stores/projectStore';
  import {t} from '$stores/l10nStore';
  import {auth} from '$stores/authStore';
  import XIcon from '$components/icons/X.svelte';
+ // TODO replace logic with server-side checks
  function addProject() {
-     project.addProject($project.newProject)
+     console.log('$uu', $project.newProject)
+     if ($project.newProject.name !== '' && $project.newProject.coverImage !== '' && $project.newProject.description !== '') {
+         project.addProject($project.newProject)
+     }
+     return;
  }
 </script>
 
@@ -25,17 +30,17 @@
 
         <div class="flex flex-col">
             <label for="create-project-title" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.title')}</label>
-            <input id="create-project-title" bind:value="{$project.newProject.name}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, name: e.target.value}}))}" type="text" placeholder="" class="input input-bordered input-sm font-bold w-full" />
+            <input id="create-project-title" required bind:value="{$project.newProject.name}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, name: e.target.value}}))}" type="text" placeholder="" class="input input-bordered input-sm font-bold w-full" />
         </div>
 
         <div class="flex flex-col">
             <label for="create-project-cover" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.coverImage')}</label>
-            <input id="create-project-cover" bind:value="{$project.newProject.coverImage}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, coverImage: e.target.value}}))}" type="text" placeholder="https://..." class="input input-bordered input-sm font-bold w-full" />
+            <input id="create-project-cover" required bind:value="{$project.newProject.coverImage}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, coverImage: e.target.value}}))}" type="text" placeholder="https://..." class="input input-bordered input-sm font-bold w-full" />
         </div>
 
         <div class="flex flex-col">
             <label for="create-project-description" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.description')}</label>
-            <textarea id="create-project-description" bind:value="{$project.newProject.description}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, description: e.target.value}}))}" placeholder="" class="textarea textarea-bordered font-bold textarea-md w-full" />
+            <textarea id="create-project-description" required bind:value="{$project.newProject.description}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, description: e.target.value}}))}" placeholder="" class="textarea textarea-bordered font-bold textarea-md w-full" />
         </div>
         <div class="divider"></div>
         <h4 class="font-bold text-base">Donation settings</h4>
@@ -49,7 +54,11 @@
             </div>
             <div class="flex flex-col">
                 <label for="create-project-goal" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.goal')}</label>
-                <input id="create-project-goal" type="range" min="0" max="100000" bind:value="{$project.newProject.goal}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, goal: e.target.value}}))}" class="range range-primary" />
+                <kbd id="flow-create-project-address-settings" class="kbd w-full mb-4">
+                    {$currencyGoal}
+                </kbd>
+                <input id="create-project-goal" required type="range" min="0" max="100000" bind:value="{$project.newProject.goal}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, goal: e.target.value}}))}" class="range range-primary" />
+                <input id="create-project-goal" required min="0" max="100000" bind:value="{$project.newProject.goal}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, goal: e.target.value}}))}" class="range range-primary" />
             </div>
 
             <div class="flex justify-end">

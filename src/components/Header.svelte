@@ -8,7 +8,6 @@
 
  function signUser() {
      auth.googleSignIn();
-     // signIn("google")
  }
 </script>
 
@@ -19,9 +18,13 @@
         </div>
     {/if}
     <div class="flex-1 px-2 lg:flex-none">
-        <a href="/" class="text-lg font-bold">{$t('header.logo')}</a>
+        <a href="/" class="text-lg font-bold max-md:hidden">{$t('header.logo')}</a>
+        <a href="/" class="md:hidden">
+            <img src="/src/lib/assets/logo64.png" alt="" class="w-10 h-10" />
+        </a>
     </div>
     <div class="ml-auto">
+        <a href="/projects" class="text-base font-bold mr-4 hover:underline">{$t('header.discover')}</a>
         {#if $auth.isAuthenticated}
             {#if !isMobile}
                 <IconMenu />

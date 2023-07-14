@@ -16,11 +16,4 @@ export async function entries() {
   )(res.data());
 }
 
-export async function load({params}) {
-  const docSnap = await getDoc(doc(db, 'projects', params.slug));
-  return {
-    ...docSnap.data()
-  };
-}
-
 export const prerender = true;

@@ -3,6 +3,10 @@ import {browser} from '$app/environment';
 import isMobile from '$lib/utils/isMobile';
 import {initializeApp} from 'firebase/app';
 import {firebaseKeys} from '$lib/firebase/config';
+import {deleteDoc, doc, updateDoc} from 'firebase/firestore';
+import {debounce} from '$lib/utils/debounce';
+import {goto} from '$app/navigation';
+import {get} from 'svelte/store';
 import {db} from '$stores/dbStore';
 
 import {
@@ -53,10 +57,6 @@ const initialState = {
 };
 
 function createAuth(key) {
-  console.log(
-    'browser && localStorage.getItem(key)',
-    browser && localStorage.getItem(key)
-  );
   const initialValue =
     browser && localStorage.getItem(key)
       ? JSON.parse(localStorage.getItem(key))
@@ -104,6 +104,34 @@ function createAuth(key) {
       });
     }
   }
+
+  const saveBaseProfileToDb = debounce((prev, payload) => {
+    db.setDoc('users', prev.user.id, {
+      providerId: prev.providerId,
+      user: {
+        ...prev.user,
+        ...payload
+      },
+      google: prev.google,
+      flow: prev.flow
+    });
+  }, 7000);
+
+  const saveBaseProfileLinksToDb = debounce((prev, payload) => {
+    db.setDoc('users', prev.user.id, {
+      providerId: prev.providerId,
+      user: {
+        ...prev.user,
+        social: {
+          ...prev.user.social,
+          ...payload
+        }
+      },
+      google: prev.google,
+      flow: prev.flow
+    });
+  }, 7000);
+
   return {
     set,
     subscribe,
@@ -113,9 +141,11 @@ function createAuth(key) {
         if (isMobile) {
           const result = await signInWithRedirect(auth, provider);
           updateGoogleProfile(result);
+          goto('/user');
         } else {
           const result = await signInWithPopup(auth, provider);
           updateGoogleProfile(result);
+          goto('/user');
         }
       } catch (error) {
         console.error('Google sign-in error:', error);
@@ -187,6 +217,7 @@ function createAuth(key) {
     },
     updateUserBaseProfile: (payload) => {
       update((prev) => {
+        saveBaseProfileToDb(prev, payload);
         return {
           ...prev,
           user: {
@@ -198,6 +229,7 @@ function createAuth(key) {
     },
     updateUserLinks: (payload) => {
       update((prev) => {
+        saveBaseProfileLinksToDb(prev, payload);
         return {
           ...prev,
           user: {
@@ -209,6 +241,22 @@ function createAuth(key) {
           }
         };
       });
+    },
+    deleteUser: async () => {
+      try {
+        signOut(auth);
+        await deleteDoc(doc(db, 'users', get(auth).user.id));
+        const docRef = doc(db.getDbRef(), 'state/projCont');
+        updateDoc(docRef, {
+          [get(auth).user.id]: []
+        });
+        set(() => ({
+          ...initialState
+        }));
+      } catch (error) {
+        console.error('Google sign-out error:', error);
+        throw error;
+      }
     },
     useLocalStorage: () => {
       subscribe((current) => {

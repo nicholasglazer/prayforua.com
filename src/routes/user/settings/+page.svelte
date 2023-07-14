@@ -8,9 +8,21 @@
      flowUnauth();
      auth.unauthenticateFlowAccount();
  }
+ function deleteUser() {
+     logOutFlow();
+     auth.deleteUser();
+ }
 </script>
 
-<div class="w-full max-w-2xl bg-base8 shadow mt-8 m-8 p-4 py-8">
+<div class="w-full max-w-2xl mt-8 mb-2 flex justify-between items-center">
+    <small class="mr-4 font-semibold">
+        {$t('user.settings.pageDescription')}
+    </small>
+    <a class="btn btn-ghost btn-outline btn-sm" href="/user">
+        {$t('user.edit.backBtn')}
+    </a>
+</div>
+<div class="w-full max-w-2xl bg-base8 shadow m-8 p-4">
     <div class="flex max-md:flex-col md:items-center justify-between">
         {#if $auth.flow.user?.addr}
             <div class="flex flex-col align-center">
@@ -41,6 +53,15 @@
         <Locales />
     </div>
     <div class="divider"></div>
+
+    <div class="flex max-md:flex-col md:items-center justify-between">
+        <span class="font-bold font-sm">
+            {$t('user.settings.deleteBtnDescription')}
+        </span>
+        <button class="btn bg-red" on:click={() => deleteUser()}>
+            {$t('user.settings.deleteBtn')}
+        </button>
+    </div>
 </div>
 
 <!-- <div class="w-full max-w-xl bg-base8 shadow mt-8 m-8 p-4 py-8">

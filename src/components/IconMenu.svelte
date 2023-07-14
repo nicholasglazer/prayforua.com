@@ -1,10 +1,12 @@
 <script>
  import {t} from '$stores/l10nStore';
  import {auth} from '$stores/authStore';
+ import {goto} from '$app/navigation';
 
  function signOutUser() {
      auth.googleSignOut()
-     // signOut()
+     auth.unauthenticateFlowAccount();
+     goto('/');
  }
 </script>
 <div>
