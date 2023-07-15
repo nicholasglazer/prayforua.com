@@ -1,5 +1,5 @@
 import {project} from '$stores/projectStore';
 
-export async function load() {
+export function load() {
   project.getCurrentProjects();
 }

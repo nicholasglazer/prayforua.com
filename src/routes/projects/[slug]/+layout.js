@@ -6,8 +6,12 @@ const ini = initializeApp(firebaseKeys);
 const db = getFirestore(ini);
 
 export async function load({params}) {
-  const docSnap = await getDoc(doc(db, 'projects', params.slug));
+  const projectSnap = await getDoc(doc(db, 'projects', params.slug));
+  const creatorSnap = await getDoc(
+    doc(db, 'users', projectSnap.data().creatorId)
+  );
   return {
-    ...docSnap.data()
+    project: projectSnap.data(),
+    creator: creatorSnap.data()
   };
 }

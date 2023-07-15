@@ -34,19 +34,6 @@ function createDb(key) {
         console.error('Error adding document to Firestore:', error);
       }
     },
-    // updDoc: async (path, k, v, ...rest) => {
-    //   try {
-    //     const docRef = doc(db, path);
-    //     await updateDoc(docRef, {
-    //       [k]: v,
-    //       ...rest
-    //     });
-    //     // await setDoc(docRef, payload);
-    //     console.log('Document added to Firestore:', document);
-    //   } catch (error) {
-    //     console.error('Error adding document to Firestore:', error);
-    //   }
-    // },
     useLocalStorage: () => {
       subscribe((current) => {
         if (browser) {

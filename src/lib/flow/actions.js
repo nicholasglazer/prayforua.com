@@ -17,15 +17,15 @@ function initTransactionState() {
 // set Svelte $user store to currentUser,
 // so other components can access it
 fcl.currentUser.subscribe(auth.assignFlowAccount, []);
-async function test() {
-  const account = await fcl.account('0x4c9f41eb4765c946');
-  const admacc = await fcl.account('0xe1ce55a0609b04a6');
+// async function test() {
+//   const account = await fcl.account('0x4c9f41eb4765c946');
+//   const admacc = await fcl.account('0xe1ce55a0609b04a6');
 
-  console.log('acc 8****', account);
-  console.log('admacc 8****', admacc);
-}
+//   console.log('acc 8****', account);
+//   console.log('admacc 8****', admacc);
+// }
 
-test();
+// test();
 
 fcl.currentUser.subscribe(console.log);
 
@@ -200,7 +200,6 @@ export const sendProfileQuery = async (addr) => {
       `,
       args: (arg, t) => [arg(addr, t.Address)]
     });
-    console.log('projefi!!!!!!!!!!!!!!!!! ', profileQueryResult);
     auth.assignFlowProfile(profileQueryResult ?? null);
   } catch (e) {
     console.warn(e);
@@ -221,7 +220,6 @@ export const sendStorefrontQuery = async (addr) => {
       `,
       args: (arg, t) => [arg(addr, t.Address)]
     });
-    console.log('projefi!!!!!!!!!!!!!!!!! ', storefrontQueryResult);
     // auth.assignFlowProfile(storefrontQueryResult ?? null);
   } catch (e) {
     console.warn(e);

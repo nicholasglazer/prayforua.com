@@ -1,6 +1,7 @@
 import {
   collection,
   getDocs,
+  getDoc,
   doc,
   where,
   query,
@@ -44,7 +45,9 @@ const initialState = {
     }
   },
   projects: {},
-  currentProjectsStatus: false
+  allProjects: {},
+  currentProjectsStatus: false,
+  allProjectsStatus: false
 };
 
 function createProject(key) {
@@ -53,7 +56,6 @@ function createProject(key) {
       ? JSON.parse(localStorage.getItem(key))
       : initialState;
 
-  console.log('initialValue', initialValue);
   const {subscribe, set, update} = writable(initialValue);
 
   const saveCurrentProjectToDb = debounce((prev, payload, id) => {
@@ -72,7 +74,23 @@ function createProject(key) {
     set,
     update,
     subscribe,
-    getAllProjects: async () => {},
+    getAllProjects: async () => {
+      update((prev) => ({...prev, allProjectsStatus: false}));
+      const querySnapshot = await getDocs(
+        collection(db.getDbRef(), 'projects')
+      );
+      const allProjects = await querySnapshot.docs.reduce(async (acc, d) => {
+        const docRef = doc(db.getDbRef(), 'users', d.data().creatorId);
+        const docSnap = await getDoc(docRef);
+        acc[d.id] = {
+          project: d.data(),
+          creator: docSnap.data()
+        };
+        return acc;
+      }, {});
+      console.log('allpr,', allProjects);
+      update((prev) => ({...prev, allProjects, allProjectsStatus: true}));
+    },
     getCurrentProjects: async () => {
       try {
         const projectsIds = await db.getDoc('state', 'projCont');
@@ -83,7 +101,6 @@ function createProject(key) {
         const querySnapshot = await getDocs(q);
         update((prev) => ({...prev, currentProjectsStatus: false}));
         querySnapshot.forEach((doc) => {
-          //doc.data() is never undefined for query doc snapshots
           update((prev) => ({
             ...prev,
             projects: {

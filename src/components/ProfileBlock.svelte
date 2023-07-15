@@ -62,11 +62,19 @@
             </div>
         </div>
         <div class="flex flex-wrap flex-initial justify-center items-center w-[100px]">
-            <div class="avatar">
-                <div class="w-22 mask mask-circle">
-                    <img alt="avatar" src={$auth.google.profile?.picture} />
+            {#if $auth.isAuthenticated}
+                <div class="avatar">
+                    <div class="w-20 mask mask-circle">
+                        <img alt="" src={$auth.google.profile?.picture} />
+                    </div>
                 </div>
-            </div>
+            {:else}
+                <div class="avatar">
+                    <div class="w-20 h-20 mask mask-circle">
+                        <div class="bg-base5 w-full h-full"></div>
+                    </div>
+                </div>
+            {/if}
             <div class="flex">
                 <a class="btn btn-ghost btn-xs mt-2 btn-outline" href="/user/edit">
                     {$t('user.edit')}
