@@ -16,4 +16,4 @@ export async function entries() {
   )(res.data());
 }
 
-export const prerender = true;
+// export const prerender = true;

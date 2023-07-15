@@ -19,7 +19,7 @@
 
 </div>
 {#if data.creator?.user.id === $auth.user?.id}
-    <a href="{data.id}/edit" class="">
+    <a href="{data.slug}/edit" class="">
         settings
     </a>
 {/if}
