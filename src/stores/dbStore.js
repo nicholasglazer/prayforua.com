@@ -28,7 +28,7 @@ function createDb(key) {
     setDoc: async (path, id, payload) => {
       try {
         const docRef = doc(db, path, id);
-        await setDoc(docRef, payload);
+        await setDoc(docRef, {...payload}, {merge: true});
         console.log('Document added to Firestore:', document);
       } catch (error) {
         console.error('Error adding document to Firestore:', error);

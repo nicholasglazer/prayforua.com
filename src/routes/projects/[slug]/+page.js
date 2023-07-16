@@ -15,5 +15,3 @@ export async function entries() {
     map((slug) => ({slug}))
   )(res.data());
 }
-
-// export const prerender = true;

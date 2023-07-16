@@ -10,20 +10,17 @@ import {initializeApp} from 'firebase/app';
 import {firebaseKeys} from '$lib/firebase/config';
 
 export async function load() {
-  // project.getAllProjects();
-
   const ini = initializeApp(firebaseKeys);
   const db = getFirestore(ini);
 
+  const userSnap = async (id) => {
+    const docRef = doc(db, 'users', id);
+    return getDoc(docRef);
+  };
   const querySnapshot = getDocs(collection(db, 'projects'));
-  // const allProjects = querySnapshot.docs.reduce(async (acc, d) => {
-  //   const docRef = doc(db, 'users', d.data().creatorId);
-  //   const docSnap = await getDoc(docRef);
-  //   acc[d.id] = {
-  //     project: d.data(),
-  //     creator: docSnap.data()
-  //   };
-  //   return acc;
-  // }, {});
-  return {querySnapshot};
+
+  return {
+    querySnapshot,
+    userSnap
+  };
 }

@@ -1,46 +1,49 @@
 <script>
- import {project, currencyGoal} from '$stores/projectStore';
+ import {project, newProject, resetNewProjectStore} from '$stores/projectStore';
  import {t} from '$stores/l10nStore';
  import {auth} from '$stores/authStore';
  import XIcon from '$components/icons/X.svelte';
- // TODO replace logic with server-side checks
+ import Modal from '$components/Modal.svelte';
+
+ let d;
+ $: showModal = false;
  function addProject() {
-     console.log('$uu', $project.newProject)
-     if ($project.newProject.name !== '' && $project.newProject.coverImage !== '' && $project.newProject.description !== '') {
-         project.addProject($project.newProject)
+     // TODO maybe? replace logic with server-side checks
+     if ($newProject.title !== '' && $newProject.imageCover !== '') {
+         d.close();
+         project.addProject($newProject);
+         resetNewProjectStore();
      }
      return;
  }
+ function updateNewProject(payload) {
+     newProject.update((prev) => ({...prev, ...payload}))
+ }
 </script>
 
-<!-- Open the modal using ID.showModal() method -->
-<button class="btn btn-ghost" onclick="new_project_modal.showModal()">
+<button class="btn btn-ghost" on:click={() => (showModal = true)}>
     {$t('user.createProject')}
     <div class="rotate-45 ml-2">
         <XIcon/>
     </div>
 </button>
-<dialog id="new_project_modal" class="modal">
-    <form method="dialog" class="modal-box">
-        <div class="flex justify-end">
-            <button class="btn btn-sm btn-square btn-ghost" onclick="new_project_modal.showModal()"><XIcon /></button>
-        </div>
 
-        <h3 class="font-bold text-lg">You're about to create new volounteer project!</h3>
-
+<Modal bind:showModal bind:dialog={d}>
+    <h3 slot="header" class="font-bold text-lg">You're about to create new volounteer project!</h3>
+    <form>
         <div class="flex flex-col">
-            <label for="create-project-title" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.title')}</label>
-            <input id="create-project-title" required bind:value="{$project.newProject.name}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, name: e.target.value}}))}" type="text" placeholder="" class="input input-bordered input-sm font-bold w-full" />
+            <label for="create-project-title" required class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.title')}</label>
+            <input id="create-project-title" bind:value="{$newProject.title}" on:input="{(e) => updateNewProject({title: e.target.value}, e)}" type="text" placeholder="" class="input input-bordered input-sm font-bold w-full" />
         </div>
 
         <div class="flex flex-col">
-            <label for="create-project-cover" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.coverImage')}</label>
-            <input id="create-project-cover" required bind:value="{$project.newProject.coverImage}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, coverImage: e.target.value}}))}" type="text" placeholder="https://..." class="input input-bordered input-sm font-bold w-full" />
+            <label for="create-project-cover" required class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.imageCover')}</label>
+            <input id="create-project-cover" bind:value="{$newProject.imageCover}" on:input="{(e) => updateNewProject({imageCover: e.target.value})}" type="text" placeholder="https://..." class="input input-bordered input-sm font-bold w-full" />
         </div>
 
         <div class="flex flex-col">
             <label for="create-project-description" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.description')}</label>
-            <textarea id="create-project-description" required bind:value="{$project.newProject.description}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, description: e.target.value}}))}" placeholder="" class="textarea textarea-bordered font-bold textarea-md w-full" />
+            <textarea id="create-project-description" bind:value="{$newProject.description}" on:input="{(e) => updateNewProject({description: e.target.value})}" placeholder="" class="textarea textarea-bordered font-bold textarea-md w-full" />
         </div>
         <div class="divider"></div>
         <h4 class="font-bold text-base">Donation settings</h4>
@@ -55,10 +58,10 @@
             <div class="flex flex-col">
                 <label for="create-project-goal" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.createProject.goal')}</label>
                 <kbd id="flow-create-project-address-settings" class="kbd w-full mb-4">
-                    {$currencyGoal}
+                    {$newProject.goal} Flow
                 </kbd>
-                <input id="create-project-goal" required type="range" min="0" max="100000" bind:value="{$project.newProject.goal}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, goal: e.target.value}}))}" class="range range-primary" />
-                <input id="create-project-goal" required min="0" max="100000" bind:value="{$project.newProject.goal}" on:input="{(e) => project.update((prev) => ({...prev, newProject: {...prev.newProject, goal: e.target.value}}))}" class="range range-primary" />
+                <input id="create-project-goal" type="range" min="0" max="100000" bind:value="{$newProject.goal}" on:input="{(e) => updateNewProject({goal: e.target.value})}" class="range range-primary" />
+                <input id="create-project-goal" min="0" max="100000" bind:value="{$newProject.goal}" on:input="{(e) => updateNewProject({goal: e.target.value})}" class="range range-primary" />
             </div>
 
             <div class="flex justify-end">
@@ -69,9 +72,8 @@
                 {@html $t('user.edit.flowNotConnected')}
             </div>
         {/if}
-
     </form>
-    <form method="dialog" class="modal-backdrop">
-        <button />
-    </form>
-</dialog>
+    <!-- <form method="dialog" class="modal-backdrop">
+         <button />
+         </form> -->
+</Modal>

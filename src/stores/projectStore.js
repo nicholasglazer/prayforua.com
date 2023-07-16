@@ -10,7 +10,7 @@ import {
   arrayUnion,
   arrayRemove
 } from 'firebase/firestore';
-import {writable, derived} from 'svelte/store';
+import {writable} from 'svelte/store';
 import {browser} from '$app/environment';
 import {db} from '$stores/dbStore';
 import {auth} from '$stores/authStore';
@@ -18,16 +18,43 @@ import {nanoid} from 'nanoid';
 import {get} from 'svelte/store';
 import {debounce} from '$lib/utils/debounce';
 
-const initialState = {
-  newProject: {
-    id: '',
+const initialNewProjectState = {
+  name: '',
+  description: '',
+  country: '',
+  imageCover: '',
+  goal: 0,
+  tags: [],
+  id: '',
+  isPublic: false,
+  links: {
+    Discord: '',
+    Facebook: '',
+    Github: '',
+    Instagram: '',
+    Linkedin: '',
+    Telegram: '',
+    Twitter: '',
+    Youtube: ''
+  },
+  paymentLinks: {
+    FlowAddr: '',
+    Monobank: '',
+    Privatbank: ''
+  }
+};
+
+export const newProject = writable(initialNewProjectState);
+export const resetNewProjectStore = () =>
+  newProject.set({
     name: '',
     description: '',
     country: '',
-    isPublic: true,
-    coverImg: '',
+    imageCover: '',
     goal: 0,
     tags: [],
+    id: '',
+    isPublic: false,
     links: {
       Discord: '',
       Facebook: '',
@@ -43,7 +70,9 @@ const initialState = {
       Monobank: '',
       Privatbank: ''
     }
-  },
+  });
+
+const initialState = {
   projects: {},
   allProjects: {},
   currentProjectsStatus: false,
@@ -58,16 +87,8 @@ function createProject(key) {
 
   const {subscribe, set, update} = writable(initialValue);
 
-  const saveCurrentProjectToDb = debounce((prev, payload, id) => {
-    db.setDoc('users', id, {
-      providerId: prev.providerId,
-      user: {
-        ...prev.user,
-        ...payload
-      },
-      google: prev.google,
-      flow: prev.flow
-    });
+  const saveCurrentProjectToDb = debounce((payload, id) => {
+    db.setDoc('projects', id, {...payload});
   }, 7000);
 
   return {
@@ -88,7 +109,6 @@ function createProject(key) {
         };
         return acc;
       }, {});
-      console.log('allpr,', allProjects);
       update((prev) => ({...prev, allProjects, allProjectsStatus: true}));
     },
     getCurrentProjects: async () => {
@@ -110,25 +130,26 @@ function createProject(key) {
             currentProjectsStatus: true
           }));
         });
-        console.log('querySnapshot', querySnapshot);
       } catch {
         update((prev) => ({...prev, currentProjectsStatus: null}));
       }
     },
     updateCurrentProject: (payload, id) => {
-      update((prev) => {
-        saveCurrentProjectToDb(prev, payload, id);
-        return {
-          ...prev,
-          projects: {
-            ...prev.projects,
-            [id]: {
-              ...prev.projects[id],
-              ...payload
+      if (id) {
+        update((prev) => {
+          saveCurrentProjectToDb(payload, id);
+          return {
+            ...prev,
+            projects: {
+              ...prev.projects,
+              [id]: {
+                ...prev.projects[id],
+                ...payload
+              }
             }
-          }
-        };
-      });
+          };
+        });
+      }
     },
     addProject: (payload) => {
       const id = nanoid();
@@ -142,17 +163,27 @@ function createProject(key) {
         [get(auth).user.id]: arrayUnion(id)
       });
       update((prev) => ({
+        ...prev,
         projects: {...prev.projects, [id]: {...payload, id}},
-        newProject: initialState.newProject,
         currentProjectsStatus: true
       }));
     },
     removeProject: async (id) => {
-      await deleteDoc(doc(db, 'projects', id));
+      await deleteDoc(doc(db.getDbRef(), 'projects', id));
       const docRef = doc(db.getDbRef(), 'state/projCont');
       updateDoc(docRef, {
         [get(auth).user.id]: arrayRemove(id)
       });
+      console.log(id);
+      update((prev) => ({
+        ...prev,
+        projects: Object.fromEntries(
+          Object.entries(prev.projects).filter((f) => f[0] !== id)
+        ),
+        ...(!Object.entries(prev.projects).length && {
+          currentProjectsStatus: null
+        })
+      }));
     },
     useLocalStorage: () => {
       subscribe((current) => {
@@ -163,9 +194,4 @@ function createProject(key) {
     }
   };
 }
-
 export const project = createProject('app-projects');
-export const currencyGoal = derived(
-  project,
-  ($project) => `${$project.newProject.goal} Flow`
-);
