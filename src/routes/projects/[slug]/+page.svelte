@@ -5,13 +5,14 @@
  import DonateModal from '$components/DonateModal.svelte';
  import ReadMore from '$components/ReadMore.svelte';
  export let data;
- console.log('creator', data)
+
+ $: innerHeight = 0;
 </script>
 
+<svelte:window bind:innerHeight />
 
-
-<div class="flex flex-col w-full items-center mt-12">
-    <div class="flex flex-1 flex-col items-center w-2xl max-w-2xl">
+<div class="flex flex-col w-full items-center" style="min-height: {innerHeight - 64}px">
+    <div class="flex flex-col w-2xl max-w-2xl mt-12">
         <h3 class="text-2xl font-bold">{data.project.title} {$t('project.by')} {data.creator?.user?.firstName} {data.creator?.user?.lastName}</h3>
         <ReadMore textContent={data.project.description} maxChars={135} />
     </div>
