@@ -176,6 +176,7 @@ function createAuth(key) {
       }));
     },
     assignFlowAccount: (payload) => {
+      console.log('assigpayolad', payload);
       update((prev) => {
         saveToUsersDb(prev.user.id, {flow: {user: payload}});
         return {

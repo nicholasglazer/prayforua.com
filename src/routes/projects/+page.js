@@ -1,10 +1,10 @@
-import {project} from '$stores/projectStore';
 import {
   collection,
   getDocs,
   getDoc,
   doc,
-  getFirestore
+  getFirestore,
+  onSnapshot
 } from 'firebase/firestore';
 import {initializeApp} from 'firebase/app';
 import {firebaseKeys} from '$lib/firebase/config';
@@ -15,7 +15,7 @@ export async function load() {
 
   const userSnap = async (id) => {
     const docRef = doc(db, 'users', id);
-    return getDoc(docRef);
+    return onSnapshot(docRef);
   };
   const querySnapshot = getDocs(collection(db, 'projects'));
 

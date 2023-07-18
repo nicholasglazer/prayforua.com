@@ -2,7 +2,7 @@
  import {auth} from '$stores/authStore';
  import {t} from '$stores/l10nStore';
  import {countryList} from '$lib/data/countries';
- import {sendProfileQuery, initFlowProfile, mutateFlowProfile, initFlowStorefront} from '$lib/flow/actions';
+ import {sendProfileQuery, initFlowProfile, mutateFlowProfile} from '$lib/flow/actions'
  import {socialIcons} from '$lib/utils/socialIcons';
 
  $: socialInputVisibility = {};
@@ -109,13 +109,6 @@
                 <button id="load-flow-profile" class="btn btn-sm btn-accent" on:click="{sendProfileQuery($auth.flow?.user.addr)}">{$t('user.edit.flowLoadProfile')}</button>
             </div>
 
-        {/if}
-
-        {#if $auth.flow.flowProfileStatus === 4 && $auth.flow.profile?.name}
-            <div class="flex justify-between">
-                <label for="load-flow-profile" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.edit.flowCreateProfileDescription')}:</label>
-                <button class="btn btn-sm btn-accent" on:click="{initFlowStorefront}">{$t('user.edit.flowCreateStorefront')}</button>
-            </div>
         {/if}
 
         {#if $auth.flow.flowProfileStatus === 4 && $auth.flow.profile?.name}

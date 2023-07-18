@@ -2,7 +2,7 @@
  import {auth} from '$stores/authStore';
  import {t} from '$stores/l10nStore';
  import {checkLink} from '$lib/utils/checkLink';
- import {socialIcons} from '$lib/utils/checkLink';
+ import {socialIcons} from '$lib/utils/socialIcons';
  $: user = $auth.user;
 </script>
 

@@ -2,11 +2,14 @@
  import {t} from '$stores/l10nStore';
  import {auth} from '$stores/authStore';
  import {goto} from '$app/navigation';
+ import {flowUnauth} from '$lib/flow/actions';
 
  function signOutUser() {
      auth.googleSignOut()
      auth.unauthenticateFlowAccount();
+     flowUnauth();
      goto('/');
+     localStorage.clear();
  }
 </script>
 <div>

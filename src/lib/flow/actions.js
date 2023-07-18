@@ -16,17 +16,16 @@ function initTransactionState() {
 
 // set Svelte $user store to currentUser,
 // set balance on login/logout
-fcl.currentUser.subscribe(auth.assignFlowAccount, []);
-fcl.currentUser.subscribe(
-  (user) => getAccountBalance(user.addr, get(auth).user.id),
-  []
-);
+fcl.currentUser.subscribe((user) => {
+  if (user) {
+    auth.assignFlowAccount(user);
+    getAccountBalance(user.addr, get(auth).user.id);
+  }
+}, []);
 
 // Lifecycle FCL Auth functions
 export const flowUnauth = () => fcl.unauthenticate();
-export const flowLogIn = () => {
-  fcl.logIn();
-};
+export const flowLogIn = () => fcl.authenticate();
 
 // TRANSACTIONS
 // init account
@@ -209,6 +208,7 @@ export const transferFlow = async (amount, addr) => {
       transactionStatus.set(res.status);
       if (res.status) {
         if (res.status === 4) {
+          getAccountBalance(addr, get(auth).user.id);
           auth.addFlowTransaction({
             txId: transactionId,
             event: `${amount} Flow transferred to ${addr} at`,
@@ -325,7 +325,7 @@ export const getAccountBalance = async (addr, id) => {
       `,
       args: (arg, t) => [arg(addr, t.Address)]
     });
-    if (addr) {
+    if (accountBalance && id) {
       auth.assignFlowBalance(accountBalance, id);
     }
   } catch (e) {
