@@ -84,7 +84,7 @@ function createAuth(key) {
       providerId,
       isAuthenticated: true
     }));
-    if (isNewUser) {
+    if (!isNewUser) {
       update((prev) => ({
         ...prev,
         user: {

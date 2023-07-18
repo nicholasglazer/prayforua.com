@@ -21,12 +21,18 @@
  }
 </script>
 
+
+{#if Object.entries($project.projects).length < 1}
 <button class="btn btn-ghost" on:click={() => (showModal = true)}>
     {$t('user.createProject')}
     <div class="rotate-45 ml-2">
         <XIcon/>
     </div>
 </button>
+{:else}
+<div class="text-sm font-bold font-red mb-2">
+    This demo is limited to one project only, although the code allows for the creation of multiple projects.</div>
+{/if}
 
 <Modal bind:showModal bind:dialog={d}>
     <h3 slot="header" class="font-bold text-lg">You're about to create new volounteer project!</h3>
