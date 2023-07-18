@@ -116,22 +116,31 @@ function createProject(key) {
     getCurrentProjects: async () => {
       try {
         const projectsIds = await db.getDoc('state', 'projCont');
-        const q = query(
-          collection(db.getDbRef(), 'projects'),
-          where('id', 'in', projectsIds.data()[get(auth).user.id])
-        );
-        const querySnapshot = await getDocs(q);
-        update((prev) => ({...prev, currentProjectsStatus: false}));
-        querySnapshot.forEach((doc) => {
+        const projectsIdsData = projectsIds.data();
+        const currentUserID = get(auth).user.id;
+        if (projectsIdsData[currentUserID]) {
+          const q = query(
+            collection(db.getDbRef(), 'projects'),
+            where('id', 'in', projectsIdsData[currentUserID])
+          );
+          const querySnapshot = await getDocs(q);
+          update((prev) => ({...prev, currentProjectsStatus: false}));
+          querySnapshot.forEach((doc) => {
+            update((prev) => ({
+              ...prev,
+              projects: {
+                ...prev.projects,
+                ...(!prev.projects[doc.id] && {[doc.id]: doc.data()})
+              },
+              currentProjectsStatus: true
+            }));
+          });
+        } else {
           update((prev) => ({
             ...prev,
-            projects: {
-              ...prev.projects,
-              ...(!prev.projects[doc.id] && {[doc.id]: doc.data()})
-            },
-            currentProjectsStatus: true
+            currentProjectsStatus: null
           }));
-        });
+        }
       } catch {
         update((prev) => ({...prev, currentProjectsStatus: null}));
       }
@@ -176,7 +185,6 @@ function createProject(key) {
       updateDoc(docRef, {
         [get(auth).user.id]: arrayRemove(id)
       });
-      console.log(id);
       update((prev) => ({
         ...prev,
         projects: Object.fromEntries(

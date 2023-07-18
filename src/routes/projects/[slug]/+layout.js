@@ -12,7 +12,8 @@ export async function load({params}) {
   return {
     project: pd,
     creator: creatorSnap.data(),
-    slug: params.slug
+    slug: params.slug,
+    db
   };
 }
 

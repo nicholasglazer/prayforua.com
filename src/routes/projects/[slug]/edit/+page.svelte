@@ -5,7 +5,6 @@
  import {countryList} from '$lib/data/countries'
  import {goto} from '$app/navigation';
  import {socialIcons} from '$lib/utils/socialIcons';
-
  export let data;
 
  function removeProject() {

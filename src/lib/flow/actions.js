@@ -157,7 +157,7 @@ export const mutateFlowProfile = async () => {
   }
 };
 
-export const transferFlow = async (amount, addr) => {
+export const transferFlow = async (amount, addr, cid) => {
   let transactionId = false;
   initTransactionState();
 
@@ -208,7 +208,7 @@ export const transferFlow = async (amount, addr) => {
       transactionStatus.set(res.status);
       if (res.status) {
         if (res.status === 4) {
-          getAccountBalance(addr, get(auth).user.id);
+          getAccountBalance(addr, cid);
           auth.addFlowTransaction({
             txId: transactionId,
             event: `${amount} Flow transferred to ${addr} at`,
@@ -304,7 +304,7 @@ export const sendProfileQuery = async (addr) => {
   }
 };
 
-export const getAccountBalance = async (addr, id) => {
+export const getAccountBalance = async (addr, id, bool) => {
   let accountBalance = null;
 
   try {
@@ -326,7 +326,7 @@ export const getAccountBalance = async (addr, id) => {
       args: (arg, t) => [arg(addr, t.Address)]
     });
     if (accountBalance && id) {
-      auth.assignFlowBalance(accountBalance, id);
+      auth.assignFlowBalance(accountBalance, id, bool);
     }
   } catch (e) {
     console.warn(e);

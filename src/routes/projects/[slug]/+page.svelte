@@ -1,4 +1,6 @@
 <script>
+ import {onMount} from 'svelte';
+ import {doc, onSnapshot} from 'firebase/firestore';
  import {t} from '$stores/l10nStore';
  import {auth} from '$stores/authStore';
  import {checkLink} from '$lib/utils/checkLink';
@@ -7,7 +9,21 @@
  import LocIcon from '$components/icons/Loc.svelte';
  import DonateModal from '$components/DonateModal.svelte';
  import ReadMore from '$components/ReadMore.svelte';
+ import {getAccountBalance} from '$lib/flow/actions';
+
  export let data;
+
+ let projectBalance = null;
+
+ onMount(async () => {
+     const docRef = doc(data.db, 'users', data.project?.creatorId);
+     onSnapshot(docRef, (snapshot) => {
+         if (snapshot.data().flow.balance !== undefined) {
+             projectBalance = snapshot.data().flow.balance
+             getAccountBalance($auth.flow?.user?.addr, $auth.user.id, true);
+         }
+     });
+ });
 
  $: innerHeight = 0;
 </script>
@@ -72,7 +88,11 @@
         <div class="stat">
             <div class="stat-title pb-3">Donated</div>
             <div class="stat-value">
-                {Number(data.creator?.flow?.balance).toFixed(3)} Flow
+                {#if projectBalance ?? null}
+                    {Number(projectBalance).toFixed(3)} Flow
+                {:else}
+                    <span class="loading loading-infinity loading-lg"></span>
+                {/if}
             </div>
             <div class="stat-actions">
                 <button class=""></button>
@@ -86,20 +106,23 @@
             <div class="stat-actions">
             </div>
         </div>
-        {#if data.project?.creatorId !== $auth.user?.id}
-            <div class="flex items-center pl-4 mr-4">
-                {#if $auth.flow?.user?.addr}
-                    <DonateModal projectData={data}/>
-                {:else}
-                    {@html $t('user.edit.flowNotConnected')}
-                {/if}
-            </div>
-        {:else}
-            <div class="flex items-center justify-center">
-                <a href="{data.slug}/edit" class="p-4">
-                    <CogIcon />
-                </a>
-            </div>
+
+        {#if !data.project?.isCompleted}
+            {#if data.project?.creatorId !== $auth.user?.id}
+                <div class="flex items-center pl-4 mr-4">
+                    {#if $auth.flow?.user?.addr}
+                        <DonateModal projectData={data}/>
+                    {:else}
+                        {@html $t('user.edit.flowNotConnected')}
+                    {/if}
+                </div>
+            {:else}
+                <div class="flex items-center justify-center">
+                    <a href="{data.slug}/edit" class="p-4">
+                        <CogIcon />
+                    </a>
+                </div>
+            {/if}
         {/if}
     </div>
 </div>

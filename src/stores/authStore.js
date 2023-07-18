@@ -84,7 +84,7 @@ function createAuth(key) {
       providerId,
       isAuthenticated: true
     }));
-    if (!isNewUser) {
+    if (isNewUser) {
       update((prev) => ({
         ...prev,
         user: {
@@ -164,9 +164,10 @@ function createAuth(key) {
         ...payload
       }));
     },
-    assignFlowBalance: (payload, id) => {
-      saveToUsersDbIm(id, {flow: {balance: payload}});
-      console.log('payload', payload, id);
+    assignFlowBalance: (payload, id, bool = false) => {
+      if (!bool) {
+        saveToUsersDbIm(id, {flow: {balance: payload}});
+      }
       update((prev) => ({
         ...prev,
         flow: {
@@ -176,7 +177,6 @@ function createAuth(key) {
       }));
     },
     assignFlowAccount: (payload) => {
-      console.log('assigpayolad', payload);
       update((prev) => {
         saveToUsersDb(prev.user.id, {flow: {user: payload}});
         return {

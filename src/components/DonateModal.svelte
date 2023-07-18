@@ -10,7 +10,7 @@
 
  export let projectData;
 
- $: intNum = parseFloat($auth?.flow?.balance.replace('.', ','))
+ $: intNum = parseFloat($auth?.flow?.balance.replace('.', ','));
 
  let d;
  let showModal = false;
@@ -18,14 +18,12 @@
  function handleInput(value) {
      amount.set(clamp(0, Number($auth?.flow?.balance), value));
  }
- function makeDonation(amt, addr) {
-     showModal = true;
-     transferFlow(amt, addr);
+ const makeDonation = () => {
+     if (!$amount) return;
+     d.close();
+     transferFlow($amount % 1 === 0 ? `${$amount}.0` : `${$amount}`, projectData.creator?.flow?.user?.addr, projectData.project.creatorId);
  }
- console.log('to', $auth.flow.balance.replace('.', ','))
- console.log('int', intNum)
 </script>
-<!-- <button class="btn bg-green text-base1 w-full mt-4" on:click="{() => getAccountBalance($auth?.flow?.user.addr)}">balance</button> -->
 
 <button class="btn bg-green text-base1 w-full" on:click="{() => (showModal = true)}">
     {$t('project.donate')}
@@ -54,7 +52,7 @@
             </div>
 
             <div class="flex justify-end">
-                <button class="btn btn-md btn-ghost mr-2 mt-4" on:click={() => makeDonation(`${$amount}.0`, projectData.creator?.flow?.user?.addr)}>{$t('project.donate')}</button>
+                <button class="btn btn-md btn-ghost mr-2 mt-4" on:click={() => makeDonation()}>{$t('project.donate')}</button>
             </div>
         {:else}
             <div class='text-center'>

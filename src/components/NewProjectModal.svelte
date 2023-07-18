@@ -19,6 +19,7 @@
  function updateNewProject(payload) {
      newProject.update((prev) => ({...prev, ...payload}))
  }
+ console.log('projects', $project)
 </script>
 
 
