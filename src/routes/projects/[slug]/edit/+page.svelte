@@ -4,14 +4,7 @@
  import {t} from '$stores/l10nStore';
  import {countryList} from '$lib/data/countries'
  import {goto} from '$app/navigation';
- import InstagramIcon from '$components/icons/Instagram.svelte';
- import DiscordIcon from '$components/icons/Discord.svelte';
- import TwitterIcon from '$components/icons/Twitter.svelte';
- import LinkedinIcon from '$components/icons/Linkedin.svelte';
- import FacebookIcon from '$components/icons/Facebook.svelte';
- import YoutubeIcon from '$components/icons/Youtube.svelte';
- import GithubIcon from '$components/icons/Github.svelte';
- import TelegramIcon from '$components/icons/Telegram.svelte';
+ import {socialIcons} from '$lib/utils/socialIcons';
 
  export let data;
 
@@ -25,18 +18,6 @@
  function showSocialInput(index) {
      socialInputVisibility[index] = true;
  }
-
- console.log('project', )
- const socialIcons = {
-     'Discord': DiscordIcon,
-     'Facebook': FacebookIcon,
-     'Github': GithubIcon,
-     'Instagram': InstagramIcon,
-     'Linkedin': LinkedinIcon,
-     'Telegram': TelegramIcon,
-     'Twitter': TwitterIcon,
-     'Youtube': YoutubeIcon
- };
 </script>
 
 <div class="w-full max-w-xl m-8 flex items-center justify-between">

@@ -24,7 +24,7 @@
 </script>
 <!-- <button class="btn bg-green text-base1 w-full mt-4" on:click="{() => getAccountBalance($auth?.flow?.user.addr)}">balance</button> -->
 
-<button class="btn bg-green text-base1 w-full mt-4" on:click="{() => (showModal = true)}">
+<button class="btn bg-green text-base1 w-full" on:click="{() => (showModal = true)}">
     {$t('project.donate')}
 </button>
 

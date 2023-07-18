@@ -22,6 +22,7 @@ const initialNewProjectState = {
   name: '',
   description: '',
   country: '',
+  city: '',
   imageCover: '',
   goal: 0,
   tags: [],

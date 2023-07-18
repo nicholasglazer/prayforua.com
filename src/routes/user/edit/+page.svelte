@@ -1,33 +1,15 @@
 <script>
  import {auth} from '$stores/authStore';
  import {t} from '$stores/l10nStore';
- import {countryList} from '$lib/data/countries'
- import {sendProfileQuery, initFlowProfile, mutateFlowProfile, sendStorefrontQuery, initFlowStorefront} from '$lib/flow/actions'
- import InstagramIcon from '$components/icons/Instagram.svelte';
- import DiscordIcon from '$components/icons/Discord.svelte';
- import TwitterIcon from '$components/icons/Twitter.svelte';
- import LinkedinIcon from '$components/icons/Linkedin.svelte';
- import FacebookIcon from '$components/icons/Facebook.svelte';
- import YoutubeIcon from '$components/icons/Youtube.svelte';
- import GithubIcon from '$components/icons/Github.svelte';
- import TelegramIcon from '$components/icons/Telegram.svelte';
+ import {countryList} from '$lib/data/countries';
+ import {sendProfileQuery, initFlowProfile, mutateFlowProfile, initFlowStorefront} from '$lib/flow/actions';
+ import {socialIcons} from '$lib/utils/socialIcons';
 
  $: socialInputVisibility = {};
- console.log('$auth', $auth)
 
  function showSocialInput(index) {
      socialInputVisibility[index] = true;
  }
- const socialIcons = {
-     'Discord': DiscordIcon,
-     'Facebook': FacebookIcon,
-     'Github': GithubIcon,
-     'Instagram': InstagramIcon,
-     'Linkedin': LinkedinIcon,
-     'Telegram': TelegramIcon,
-     'Twitter': TwitterIcon,
-     'Youtube': YoutubeIcon
- };
  function updateUserBaseProfile(v) {
      auth.updateUserBaseProfile(v);
  }
@@ -38,7 +20,6 @@
      auth.updateFlowProfile(v);
  }
 </script>
-
 
 <div class="w-full max-w-xl mt-8 mb-2 flex">
     <small class="mr-4 font-semibold">
