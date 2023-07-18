@@ -20,8 +20,8 @@
             </div>
         {/each}
     {:else}
-        <h3 class="font-bold">
-            No interactions yet!
+        <h3 class="font-bold text-center mt-4">
+            No transactions yet!
         </h3>
     {/if}
 </div>

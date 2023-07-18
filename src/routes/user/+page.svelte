@@ -11,7 +11,7 @@
          component: ProjectsTab
      },
      {
-         label: "Interactions",
+         label: "Transactions",
          value: 2,
          component: EventsTab
      }
