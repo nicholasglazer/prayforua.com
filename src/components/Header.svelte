@@ -25,6 +25,14 @@
         </a>
     </div>
     <div class="ml-auto">
+        {#if $auth.flow.balance && $auth.isAuthenticated}
+            <kbd class="kbd mr-4 max-md:hidden">
+                {$auth.flow.balance} Flow
+            </kbd>
+            <kbd class="kbd mr-4 md:hidden">
+                {Number($auth.flow.balance).toFixed(3)}
+            </kbd>
+        {/if}
         <a href="/projects" class="text-base font-bold mr-4 hover:underline">{$t('header.discover')}</a>
         {#if $auth.isAuthenticated}
             {#if !isMobile}

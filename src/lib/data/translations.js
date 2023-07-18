@@ -11,7 +11,9 @@ export default {
     'user.edit': 'Edit profile',
     'user.add': 'Add',
     'project.by': 'by',
-    'projects.all': 'All community projects',
+    'project.donate': 'Donate',
+    'projects.all': 'All active projects',
+    'projects.completed': 'All completed projects',
     'user.project.settings.donatations': 'Donations settings',
     'user.project.settings.address': 'Flow address to receive donations',
     'user.project.settings.deleteBtn': 'Delete project',
@@ -74,7 +76,7 @@ export default {
     'user.edit.flowCreateProfileDescription':
       'This will create your Flow blockchain profile in network by sending free transaction',
     'user.edit.flowUpdateProfile': 'Update Flow profile',
-    'user.edit.flowLoadProfile': 'Load Flow profile',
+    'user.edit.flowLoadProfile': 'Show Flow profile',
     'user.edit.flowLoadProfileDescription':
       'This will query your Flow blockchain profile',
     'user.edit.flowAddress': 'Flow address',
@@ -83,30 +85,86 @@ export default {
     'user.edit.flowBio': 'Flow bio'
   },
   ua: {
+    'general.close': 'Закрити',
     'header.logo': 'prayforua.com',
     'header.login': 'Увійти',
     'header.logout': 'Вийти',
+    'header.discover': 'Відкрити',
     'route.settings': 'Налаштування',
     'route.account': 'Профіль',
     'route.projects': 'Проекти',
-    'project.by': 'от',
-    'user.navTitle': 'Навігація аккаунту',
     'user.edit': 'Редагувати профіль',
+    'user.add': 'Додати',
+    'project.by': 'від',
+    'project.donate': 'Пожертвувати',
+    'projects.all': 'Усі активні проекти',
+    'projects.completed': 'Усі завершені проекти',
+    'user.project.settings.donatations': 'Налаштування пожертвувань',
+    'user.project.settings.address': 'Адреса Flow для отримання пожертвувань',
+    'user.project.settings.deleteBtn': 'Видалити проект',
+    'user.project.settings.deleteBtnDescription':
+      'Кнопка "Видалити" повністю видалить ваш проект',
+    'user.project.settings.publishStatus': 'Статус проекту',
+    'user.project.settings.publishStatusDraftDescription':
+      'Після публікації вашого проекту він стане видимим для інших користувачів',
+    'user.project.settings.publishStatusPublicDescription':
+      'Ваш проект є публічним, тому ви не можете змінювати деякі налаштування, такі як "мета благодійності"',
+    'user.project.settings.publishStatusPublished': 'Публічний',
+    'user.project.settings.publishStatusDraft': 'Чернетка',
+    'user.project.settings.publishBtn': 'Опублікувати проект',
+    'user.project.settings.publishBtnDescription':
+      'Ви не зможете змінити деякі налаштування після публікації вашого проекту',
+    'user.project.edit': 'Редагувати проект',
+    'user.project.backBtn': 'Повернутися до проекту',
+    'user.project.editState':
+      'Конфігурації проекту будуть збережені автоматично!',
+    'user.project.goal': 'Мета вашого благодійного проекту',
+    'user.project.title': 'Назва проекту',
+    'user.project.description': 'Опис проекту',
+    'user.project.country': 'Країна розташування проекту',
+    'user.project.city': 'Місто розташування проекту',
+    'user.project.website': 'Веб-сайт проекту',
+    'user.createProject': 'Створити новий проект',
+    'user.createProject.generalSettings': 'Загальні налаштування',
+    'user.createProject.title': 'Назва проекту',
+    'user.createProject.description': 'Опис проекту',
+    'user.createProject.imageCover': 'Обкладинка зображення',
+    'user.createProject.goal': 'Ваша благодійна мета в криптовалюті Flow',
+    'user.navTitle': 'Навігація аккаунту',
     'user.settings.connectWallet': 'Приєднати гаманець Flow',
-    'user.settings.language': 'Змінити мову',
+    'user.settings.pageDescription': 'Загальні налаштування користувача',
+    'user.settings.deleteBtn': 'Видалити акаунт',
+    'user.settings.deleteBtnDescription':
+      'Натискаючи цю кнопку, ви розумієте, що ваш акаунт, включаючи ваші проекти, буде назавжди видалений!',
+    'user.settings.connectDescription':
+      'Для створення проектів та переказу токенів вам потрібне підключення до Flow',
+    'user.settings.disconnectWallet': 'Відключити гаманець Flow',
+    'user.settings.yourAddress': 'Ваша адреса Flow',
+    'user.settings.language': 'Вибрати мову інтерфейсу',
     'user.edit.firstName': "Ім'я",
     'user.edit.lastName': 'Прізвище',
     'user.edit.occupation': 'Заняття',
     'user.edit.backBtn': 'Повернутися до профілю',
+    'user.edit.editState':
+      'Тільки профіль Flow потребує ручного збереження, базовий профіль зберігається автоматично!',
     'user.edit.website': 'Веб-сайт',
     'user.edit.country': 'Країна',
     'user.edit.city': 'Місто',
     'user.edit.bio': 'Біографія',
     'user.edit.link': 'Приєднати',
     'user.edit.flowNotConnected':
-      'Щоб редагувати профайл Flow, <a class="link" href="/user/settings"/>проиєднайте гаманець Flow</a>',
+      'Щоб редагувати профайл Flow, <a class="link" href="/user/settings"/>приєднайте гаманець Flow</a>',
+    'user.edit.flowCreateStorefront': 'Створити проект',
+    'user.edit.flowCreateStorefrontDescription':
+      'Це дозволить вам створити проект',
     'user.edit.flowCreateProfile': 'Створити профайл Flow',
     'user.edit.flowUpdateProfile': 'Оновити профайл Flow',
-    'user.edit.flowLoadProfile': 'Загрузити профайл Flow'
+    'user.edit.flowLoadProfile': 'Показати профайл Flow',
+    'user.edit.flowLoadProfileDescription':
+      'Це запитати ваш профайл Flow з блокчейну',
+    'user.edit.flowAddress': 'Адреса Flow',
+    'user.edit.flowName': "Ім'я Flow",
+    'user.edit.flowColor': 'Колір Flow',
+    'user.edit.flowBio': 'Біо Flow'
   }
 };

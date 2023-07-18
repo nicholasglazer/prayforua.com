@@ -13,7 +13,7 @@
     <CardsFallback />
 {/if}
 {#if $project.currentProjectsStatus === true}
-    <div class="grid max-sm:grid-cols-1 max-md:grid-cols-2 grid-cols-3 gap-2 mb-10">
+    <div class="grid max-md:grid-cols-1 grid-cols-2 gap-3 mb-10">
         {#each Object.entries($project.projects) as p (p[0])}
             <ProjectCard p={p} />
         {/each}

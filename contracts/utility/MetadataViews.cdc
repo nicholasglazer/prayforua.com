@@ -1,10 +1,10 @@
-import FungibleToken from "./FungibleToken.cdc"
-import NonFungibleToken from "./NonFungibleToken.cdc"
+import FungibleToken from "FungibleToken"
+import NonFungibleToken from "NonFungibleToken"
 
 /// This contract implements the metadata standard proposed
 /// in FLIP-0636.
 ///
-/// Ref: https://github.com/onflow/flow/blob/master/flips/20210916-nft-metadata.md
+/// Ref: https://github.com/onflow/flips/blob/main/application/20210916-nft-metadata.md
 ///
 /// Structs and resources can implement one or more
 /// metadata types, called views. Each view type represents
@@ -453,8 +453,7 @@ pub contract MetadataViews {
 
     /// View to expose a URL to this item on an external site.
     /// This can be used by applications like .find and Blocto to direct users
-    /// to the original link for an NFT or a project page that describes the NFT collection.
-    /// eg https://www.my-nft-project.com/overview-of-nft-collection
+    /// to the original link for an NFT.
     ///
     pub struct ExternalURL {
         pub let url: String

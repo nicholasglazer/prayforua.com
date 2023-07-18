@@ -15,23 +15,18 @@ function initTransactionState() {
 }
 
 // set Svelte $user store to currentUser,
-// so other components can access it
+// set balance on login/logout
 fcl.currentUser.subscribe(auth.assignFlowAccount, []);
-// async function test() {
-//   const account = await fcl.account('0x4c9f41eb4765c946');
-//   const admacc = await fcl.account('0xe1ce55a0609b04a6');
-
-//   console.log('acc 8****', account);
-//   console.log('admacc 8****', admacc);
-// }
-
-// test();
-
-fcl.currentUser.subscribe(console.log);
+fcl.currentUser.subscribe(
+  (user) => getAccountBalance(user.addr, get(auth).user.id),
+  []
+);
 
 // Lifecycle FCL Auth functions
 export const flowUnauth = () => fcl.unauthenticate();
-export const flowLogIn = () => fcl.logIn();
+export const flowLogIn = () => {
+  fcl.logIn();
+};
 
 // TRANSACTIONS
 // init account
@@ -43,7 +38,8 @@ export const initFlowProfile = async () => {
     transactionId = await fcl.mutate({
       cadence: `
         import Profile from 0xProfile
-        import NFTStorefrontV2 from 0xAdmin
+        import FlowToken from 0x7e60df042a9c0868
+        import FungibleToken from 0x9a0766d93b6608b7
 
         transaction {
           prepare(account: AuthAccount) {
@@ -55,18 +51,24 @@ export const initFlowProfile = async () => {
               // This creates the public capability that lets applications read the profile's info
               account.link<&Profile.Base{Profile.Public}>(Profile.publicPath, target: Profile.privatePath)
             }
-            // If the account doesn't already have a Storefront
-            if account.borrow<&NFTStorefrontV2.Storefront>(from: NFTStorefrontV2.StorefrontStoragePath) == nil {
+          if account.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault) == nil {
+            // Create a new flowToken Vault and put it in storage
+            account.save(<-FlowToken.createEmptyVault(), to: /storage/flowTokenVault)
 
-              // Create a new empty Storefront
-              let storefront <- NFTStorefrontV2.createStorefront() as! @NFTStorefrontV2.Storefront
+            // Create a public capability to the Vault that only exposes
+            // the deposit function through the Receiver interface
+            account.link<&FlowToken.Vault{FungibleToken.Receiver}>(
+                /public/flowTokenReceiver,
+                target: /storage/flowTokenVault
+            )
 
-              // save it to the account
-              account.save(<-storefront, to: NFTStorefrontV2.StorefrontStoragePath)
-
-              // create a public capability for the Storefront
-              account.link<&NFTStorefrontV2.Storefront{NFTStorefrontV2.StorefrontPublic}>(NFTStorefrontV2.StorefrontPublicPath, target: NFTStorefrontV2.StorefrontStoragePath)
-            }
+            // Create a public capability to the Vault that only exposes
+            // the balance field through the Balance interface
+            account.link<&FlowToken.Vault{FungibleToken.Balance}>(
+                /public/flowTokenBalance,
+                target: /storage/flowTokenVault
+            )
+          }
           }
         }
       `,
@@ -80,8 +82,17 @@ export const initFlowProfile = async () => {
 
     fcl.tx(transactionId).subscribe((res) => {
       transactionStatus.set(res.status);
-      if (res.status === 4) {
-        setTimeout(() => transactionInProgress.set(false), 1000);
+      if (res.status) {
+        auth.isFlowProfileCreated(res.status);
+        if (res.status === 4) {
+          auth.addFlowTransaction({
+            txId: transactionId,
+            event: 'Flow profile created',
+            status: res.status,
+            timestamp: new Date().getTime()
+          });
+          setTimeout(() => transactionInProgress.set(false), 1000);
+        }
       }
     });
   } catch (e) {
@@ -91,9 +102,10 @@ export const initFlowProfile = async () => {
 };
 
 export const mutateFlowProfile = async () => {
+  let transactionId = false;
   initTransactionState();
   try {
-    const transactionId = await fcl.mutate({
+    transactionId = await fcl.mutate({
       cadence: `
         import Profile from 0xProfile
 
@@ -128,13 +140,90 @@ export const mutateFlowProfile = async () => {
 
     fcl.tx(transactionId).subscribe((res) => {
       transactionStatus.set(res.status);
-      if (res.status === 4) {
-        setTimeout(() => transactionInProgress.set(false), 2000);
+      if (res.status) {
+        if (res.status === 4) {
+          auth.addFlowTransaction({
+            txId: transactionId,
+            event: 'Flow profile updated',
+            status: res.status,
+            timestamp: new Date().getTime()
+          });
+          setTimeout(() => transactionInProgress.set(false), 2000);
+        }
       }
     });
   } catch (e) {
     console.log(e);
     transactionStatus.set(99);
+  }
+};
+
+export const transferFlow = async (amount, addr) => {
+  let transactionId = false;
+  initTransactionState();
+
+  try {
+    transactionId = await fcl.mutate({
+      cadence: `
+        import FungibleToken from 0x9a0766d93b6608b7
+        import FlowToken from 0x7e60df042a9c0868
+
+        transaction(amount: UFix64, to: Address) {
+
+           // The Vault resource that holds the tokens that are being transferred
+           let sentVault: @FungibleToken.Vault
+
+           prepare(signer: AuthAccount) {
+
+               // Get a reference to the signer's stored vault
+               let vaultRef = signer.borrow<&FlowToken.Vault>(from: /storage/flowTokenVault)
+            ?? panic("Could not borrow reference to the owner's Vault!")
+
+               // Withdraw tokens from the signer's stored vault
+               self.sentVault <- vaultRef.withdraw(amount: amount)
+           }
+
+           execute {
+
+               // Get a reference to the recipient's Receiver
+               let receiverRef =  getAccount(to)
+                   .getCapability(/public/flowTokenReceiver)
+                   .borrow<&{FungibleToken.Receiver}>()
+                    ?? panic("Could not borrow receiver reference to the recipient's Vault")
+
+               // Deposit the withdrawn tokens in the recipient's receiver
+               receiverRef.deposit(from: <-self.sentVault)
+           }
+        }
+      `,
+      args: (arg, t) => [arg(amount, t.UFix64), arg(addr, t.Address)],
+      payer: fcl.authz,
+      proposer: fcl.authz,
+      authorizations: [fcl.authz],
+      limit: 50
+    });
+
+    txId.set(transactionId);
+
+    fcl.tx(transactionId).subscribe((res) => {
+      transactionStatus.set(res.status);
+      if (res.status) {
+        if (res.status === 4) {
+          auth.addFlowTransaction({
+            txId: transactionId,
+            event: `${amount} Flow transferred to ${addr} at`,
+            status: res.status,
+            timestamp: new Date().getTime()
+          });
+          setTimeout(() => transactionInProgress.set(false), 2000);
+        }
+      }
+    });
+    // console.log('totalSup', transactionId);
+    // auth.assignFlowProfile(storefrontQueryResult ?? null);
+  } catch (e) {
+    transactionStatus.set(99);
+    console.warn(e);
   }
 };
 
@@ -174,8 +263,17 @@ export const initFlowStorefront = async () => {
 
     fcl.tx(transactionId).subscribe((res) => {
       transactionStatus.set(res.status);
-      if (res.status === 4) {
-        setTimeout(() => transactionInProgress.set(false), 1000);
+
+      if (res.status) {
+        if (res.status === 4) {
+          auth.addFlowTransaction({
+            txId: transactionId,
+            event: 'Storefront initialized',
+            status: res.status,
+            timestamp: new Date().getTime()
+          });
+          setTimeout(() => transactionInProgress.set(false), 1000);
+        }
       }
     });
   } catch (e) {
@@ -206,6 +304,59 @@ export const sendProfileQuery = async (addr) => {
   }
 };
 
+export const getAccountBalance = async (addr, id) => {
+  let accountBalance = null;
+
+  try {
+    accountBalance = await fcl.query({
+      cadence: `
+        import FungibleToken from 0x9a0766d93b6608b7
+        import FlowToken from 0x7e60df042a9c0868
+
+        pub fun main(account: Address): UFix64 {
+
+          let vaultRef = getAccount(account)
+            .getCapability(/public/flowTokenBalance)
+            .borrow<&FlowToken.Vault{FungibleToken.Balance}>()
+            ?? panic("Could not borrow Balance reference to the Vault")
+
+          return vaultRef.balance
+        }
+      `,
+      args: (arg, t) => [arg(addr, t.Address)]
+    });
+    if (addr) {
+      auth.assignFlowBalance(accountBalance, id);
+    }
+  } catch (e) {
+    console.warn(e);
+  }
+};
+
+export const getTotalSupply = async () => {
+  let totalSup = null;
+
+  try {
+    totalSup = await fcl.query({
+      cadence: `
+        import FlowToken from 0x7e60df042a9c0868
+
+        pub fun main(): UFix64 {
+
+          let supply = FlowToken.totalSupply
+
+          return supply
+        }
+      `
+    });
+    return totalSup;
+  } catch (e) {
+    console.warn(e);
+  }
+};
+
+// test
+
 export const sendStorefrontQuery = async (addr) => {
   let storefrontQueryResult = null;
 
@@ -220,6 +371,72 @@ export const sendStorefrontQuery = async (addr) => {
       `,
       args: (arg, t) => [arg(addr, t.Address)]
     });
+    // console.log('storefrontQueryResult', storefrontQueryResult);
+    // auth.assignFlowProfile(storefrontQueryResult ?? null);
+  } catch (e) {
+    console.warn(e);
+  }
+};
+
+export const mintCharityTokens = async (addr, amount) => {
+  let charityTokensMinted = null;
+
+  try {
+    charityTokensMinted = await fcl.query({
+      cadence: `
+        import FungibleToken from 0x9a0766d93b6608b7
+        import ExampleToken from 0xAdmin
+
+        /// This transaction is what the minter Account uses to mint new tokens
+        /// They provide the recipient address and amount to mint, and the tokens
+        /// are transferred to the address after minting
+
+        transaction(recipient: Address, amount: UFix64) {
+
+        /// Reference to the Example Token Admin Resource object
+        let tokenAdmin: &ExampleToken.Administrator
+
+        /// Reference to the Fungible Token Receiver of the recipient
+        let tokenReceiver: &{FungibleToken.Receiver}
+
+        /// The total supply of tokens before the burn
+        let supplyBefore: UFix64
+
+        prepare(signer: AuthAccount) {
+            self.supplyBefore = ExampleToken.totalSupply
+
+            // Borrow a reference to the admin object
+            self.tokenAdmin = signer.borrow<&ExampleToken.Administrator>(from: ExampleToken.AdminStoragePath)
+                ?? panic("Signer is not the token admin")
+
+            // Get the account of the recipient and borrow a reference to their receiver
+            self.tokenReceiver = getAccount(recipient)
+                .getCapability(ExampleToken.ReceiverPublicPath)
+                .borrow<&{FungibleToken.Receiver}>()
+                ?? panic("Unable to borrow receiver reference")
+        }
+
+        execute {
+
+            // Create a minter and mint tokens
+            let minter <- self.tokenAdmin.createNewMinter(allowedAmount: amount)
+            let mintedVault <- minter.mintTokens(amount: amount)
+
+            // Deposit them to the receiever
+            self.tokenReceiver.deposit(from: <-mintedVault)
+
+            destroy minter
+        }
+
+        post {
+            ExampleToken.totalSupply == self.supplyBefore + amount: "The total supply must be increased by the amount"
+        }
+      }
+      `,
+      args: (arg, t) => [arg(addr, t.Address), arg(amount, t.String)]
+    });
+
+    // console.log('totalSup', charityTokensMinted);
     // auth.assignFlowProfile(storefrontQueryResult ?? null);
   } catch (e) {
     console.warn(e);

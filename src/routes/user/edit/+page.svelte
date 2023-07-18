@@ -13,6 +13,7 @@
  import TelegramIcon from '$components/icons/Telegram.svelte';
 
  $: socialInputVisibility = {};
+ console.log('$auth', $auth)
 
  function showSocialInput(index) {
      socialInputVisibility[index] = true;
@@ -109,21 +110,22 @@
 </div>
 
 <div class="w-full max-w-xl bg-base8 shadow mt-0 m-8 p-4 py-8">
-    {#if $auth.flow.user.addr}
-        <kbd id="flow-address-settings" class="kbd w-full mb-4">
-            {$auth.flow.user?.addr}
-        </kbd>
-        {#if $auth.flow.flowProfileStatus === 4}
+    {#if $auth.flow?.user.addr}
+        <a href="https://testnet.flowscan.org/account/{$auth.flow?.user?.addr}" target="_blank">
+            <kbd id="flow-address-settings" class="kbd w-full mb-4">
+                {$auth.flow?.user?.addr}
+            </kbd>
+        </a>
+        {#if $auth.flow.flowProfileStatus !== 4}
             <div class="flex justify-between">
                 <label for="load-flow-profile" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.edit.flowCreateProfileDescription')}:</label>
                 <button class="btn btn-sm btn-accent" on:click="{initFlowProfile}">{$t('user.edit.flowCreateProfile')}</button>
-                <button id="" class="btn btn-sm btn-accent" on:click="{sendStorefrontQuery($auth.flow.user.addr)}">test</button>
             </div>
         {/if}
         {#if $auth.flow.flowProfileStatus === 4 && !$auth.flow.profile?.name}
             <div class="flex justify-between">
                 <label for="load-flow-profile" class="text-xs font-bold mt-2.5 mb-1.5">{$t('user.edit.flowLoadProfileDescription')}:</label>
-                <button id="load-flow-profile" class="btn btn-sm btn-accent" on:click="{sendProfileQuery($auth.flow.user.addr)}">{$t('user.edit.flowLoadProfile')}</button>
+                <button id="load-flow-profile" class="btn btn-sm btn-accent" on:click="{sendProfileQuery($auth.flow?.user.addr)}">{$t('user.edit.flowLoadProfile')}</button>
             </div>
 
         {/if}
@@ -134,6 +136,7 @@
                 <button class="btn btn-sm btn-accent" on:click="{initFlowStorefront}">{$t('user.edit.flowCreateStorefront')}</button>
             </div>
         {/if}
+
         {#if $auth.flow.flowProfileStatus === 4 && $auth.flow.profile?.name}
             <div class="flex max-md:flex-col">
                 <div class="flex flex-col md:pr-2 flex-1">

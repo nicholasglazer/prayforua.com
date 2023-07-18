@@ -27,6 +27,7 @@ const initialNewProjectState = {
   tags: [],
   id: '',
   isPublic: false,
+  isCompleted: false,
   links: {
     Discord: '',
     Facebook: '',

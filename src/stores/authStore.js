@@ -3,7 +3,14 @@ import {browser} from '$app/environment';
 import isMobile from '$lib/utils/isMobile';
 import {initializeApp} from 'firebase/app';
 import {firebaseKeys} from '$lib/firebase/config';
-import {deleteDoc, doc, updateDoc} from 'firebase/firestore';
+
+import {
+  deleteDoc,
+  doc,
+  getDoc,
+  updateDoc,
+  arrayUnion
+} from 'firebase/firestore';
 import {debounce} from '$lib/utils/debounce';
 import {goto} from '$app/navigation';
 import {get} from 'svelte/store';
@@ -52,7 +59,8 @@ const initialState = {
   flow: {
     user: null,
     profile: null,
-    flowProfileStatus: null
+    flowProfileStatus: null,
+    transactions: []
   }
 };
 
@@ -66,16 +74,17 @@ function createAuth(key) {
   const ini = initializeApp(firebaseKeys);
   const auth = getAuth(ini);
 
-  function updateGoogleProfile(result) {
+  async function updateGoogleProfile(result) {
     const {isNewUser, profile, providerId} = getAdditionalUserInfo(result);
+    const dbUser = await getDoc(doc(db.getDbRef(), 'users', profile.id));
     update((prev) => ({
       ...prev,
+      ...dbUser.data(),
       google: {profile},
-      isNewUser,
       providerId,
       isAuthenticated: true
     }));
-    if (!isNewUser) {
+    if (isNewUser) {
       update((prev) => ({
         ...prev,
         user: {
@@ -99,38 +108,21 @@ function createAuth(key) {
         flow: {
           user: null,
           profile: null,
-          flowProfileStatus: null
+          flowProfileStatus: null,
+          transactions: []
         }
       });
     }
   }
 
-  const saveBaseProfileToDb = debounce((prev, payload) => {
-    db.setDoc('users', prev.user.id, {
-      providerId: prev.providerId,
-      user: {
-        ...prev.user,
-        ...payload
-      },
-      google: prev.google,
-      flow: prev.flow
-    });
-  }, 7000);
-
-  const saveBaseProfileLinksToDb = debounce((prev, payload) => {
-    db.setDoc('users', prev.user.id, {
-      providerId: prev.providerId,
-      user: {
-        ...prev.user,
-        social: {
-          ...prev.user.social,
-          ...payload
-        }
-      },
-      google: prev.google,
-      flow: prev.flow
-    });
-  }, 7000);
+  const saveToUsersDb = debounce(
+    (id, payload) => db.setDoc('users', id, payload),
+    4000
+  );
+  const saveToUsersDbIm = debounce(
+    (id, payload) => db.setDoc('users', id, payload),
+    100
+  );
 
   return {
     set,
@@ -166,14 +158,34 @@ function createAuth(key) {
         throw error;
       }
     },
-    assignFlowAccount: (payload) => {
+    loadUser: (payload) => {
+      update((prev) => ({
+        ...prev,
+        ...payload
+      }));
+    },
+    assignFlowBalance: (payload, id) => {
+      saveToUsersDbIm(id, {flow: {balance: payload}});
+      console.log('payload', payload, id);
       update((prev) => ({
         ...prev,
         flow: {
           ...prev.flow,
-          user: payload
+          balance: payload
         }
       }));
+    },
+    assignFlowAccount: (payload) => {
+      update((prev) => {
+        saveToUsersDb(prev.user.id, {flow: {user: payload}});
+        return {
+          ...prev,
+          flow: {
+            ...prev.flow,
+            user: payload
+          }
+        };
+      });
     },
     assignFlowProfile: (payload) => {
       update((prev) => ({
@@ -185,13 +197,30 @@ function createAuth(key) {
       }));
     },
     isFlowProfileCreated: (payload) => {
-      update((prev) => ({
-        ...prev,
-        flow: {
-          ...prev.flow,
-          flowProfileStatus: payload
-        }
-      }));
+      update((prev) => {
+        saveToUsersDb(prev.user.id, {flow: {flowProfileStatus: payload}});
+        return {
+          ...prev,
+          flow: {
+            ...prev.flow,
+            flowProfileStatus: payload
+          }
+        };
+      });
+    },
+    addFlowTransaction: (payload) => {
+      update((prev) => {
+        saveToUsersDb(prev.user.id, {
+          flow: {transactions: arrayUnion(payload)}
+        });
+        return {
+          ...prev,
+          flow: {
+            ...prev.flow,
+            transactions: [...prev.flow.transactions, payload]
+          }
+        };
+      });
     },
     unauthenticateFlowAccount: () => {
       update((prev) => ({
@@ -217,7 +246,7 @@ function createAuth(key) {
     },
     updateUserBaseProfile: (payload) => {
       update((prev) => {
-        saveBaseProfileToDb(prev, payload);
+        saveToUsersDb(prev.user.id, {user: {...prev.user, ...payload}});
         return {
           ...prev,
           user: {
@@ -229,7 +258,7 @@ function createAuth(key) {
     },
     updateUserLinks: (payload) => {
       update((prev) => {
-        saveBaseProfileLinksToDb(prev, payload);
+        saveToUsersDb(prev.user.id, {user: {...prev.user, ...payload}});
         return {
           ...prev,
           user: {

@@ -149,7 +149,7 @@
                 {$t('user.project.settings.address')}
             </label>
             <kbd id="flow-address-settings" class="kbd max-md:mb-2.5">
-                {$auth.flow.user?.addr}
+                {$auth.flow?.user?.addr}
             </kbd>
         </div>
     </div>

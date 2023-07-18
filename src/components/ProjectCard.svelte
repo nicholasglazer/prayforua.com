@@ -3,9 +3,9 @@
  export let p;
 </script>
 
-<a href="projects/{p[1].id}" class="card bg-base6 shadow-sm hover:shadow-xl hover:transition-all transition ease-in-out delay-3050 image-full overflow-hidden whitespace-nowrap text-ellipsis">
+<a href="projects/{p[1].id}" class="card bg-base8 shadow-sm hover:shadow-xl hover:transition-all transition ease-in-out delay-3050 image-full overflow-hidden whitespace-nowrap text-ellipsis">
     <figure>
-        <img src="{p[1].coverImage}" alt="image link is broken" />
+        <img src="{p[1].imageCover}" alt="image link is broken" />
     </figure>
     <div class="card-body">
         <h2 class="card-title overflow-hidden whitespace-nowrap text-ellipsis">{p[1].title}</h2>
