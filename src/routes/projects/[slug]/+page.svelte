@@ -28,14 +28,14 @@
                 </div>
                 <div class="divider my-2"/>
 
-                {#if data.creator?.user.id !== $auth.user?.id}
+                {#if data.project?.creatorId !== $auth.user?.id}
                     {#if $auth.flow.user.addr}
                         <DonateModal projectData={data}/>
                     {/if}
                 {/if}
             </div>
             <div class="flex justify-between">
-                {#if data.creator?.user.id === $auth.user?.id}
+                {#if data.project?.creatorId === $auth.user?.id}
                     <a href="{data.slug}/edit" class="">
                         <CogIcon />
                     </a>
