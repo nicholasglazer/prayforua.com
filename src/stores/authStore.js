@@ -178,7 +178,7 @@ function createAuth(key) {
     },
     assignFlowAccount: (payload) => {
       update((prev) => {
-        saveToUsersDb(prev.user.id, {flow: {user: payload}});
+        saveToUsersDb(prev.user.id, {flow: {user: {addr: payload.addr}}});
         return {
           ...prev,
           flow: {
