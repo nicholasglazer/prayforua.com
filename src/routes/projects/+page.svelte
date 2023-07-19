@@ -46,6 +46,7 @@
             <p style="color: red">{error.message}</p>
         {/await}
     </div>
+    {#if data.project?.isCompleted}
     <div class="flex flex-1 flex-col items-center w-4xl max-w-4xl">
         <h1 class="font-bold text-lg text-left w-full m-8">{$t('projects.completed')}</h1>
         {#await data.querySnapshot}
@@ -86,4 +87,5 @@
             <p style="color: red">{error.message}</p>
         {/await}
     </div>
+    {/if}
 </div>
