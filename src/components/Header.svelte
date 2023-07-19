@@ -10,6 +10,7 @@
  function signUser() {
      auth.googleSignIn();
  }
+ console.log('$au', $auth)
 </script>
 
 <header class="glass bglass sticky z-[200] shadow top-0 navbar px-4">
@@ -25,7 +26,7 @@
         </a>
     </div>
     <div class="ml-auto">
-        {#if $auth.flow.balance && $auth.isAuthenticated}
+        {#if $auth.flow.balance && $auth.isAuthenticated && $auth.flow.user?.loggedIn}
             <kbd class="kbd mr-4 max-md:hidden">
                 {$auth.flow.balance} Flow
             </kbd>
