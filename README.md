@@ -45,5 +45,6 @@ To run this project locally, you'll need to create a `.env` file. For reference,
 
 ### Thanks for attention
 
-![PrayForUA Logo](https://devfolio.co/_next/image?url=https%3A%2F%2Fassets.devfolio.co%2Fhackathons%2F633065500193427091033d2cfc2621e6%2Fprojects%2F13242cc41ceb42308aa0e6ab6fcb1a84%2Fd9f9db88-6ceb-43b6-bc5e-e5374332bfae.jpeg&w=1440&q=75) {: width=100 height=100}
+![PrayForUA Logo](https://devfolio.co/_next/image?url=https%3A%2F%2Fassets.devfolio.co%2Fhackathons%2F633065500193427091033d2cfc2621e6%2Fprojects%2F13242cc41ceb42308aa0e6ab6fcb1a84%2Fd9f9db88-6ceb-43b6-bc5e-e5374332bfae.jpeg&w=1440&q=75)
+
 Join us in our mission to make charitable donations more accessible and efficient through the power of blockchain technology. Together, we can make a positive impact in Ukraine and beyond. Let's PrayForUA! 🙏🇺🇦
