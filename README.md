@@ -4,6 +4,12 @@ PrayForUA is a crypto-charity platform built on the Flow Blockchain, addressing 
 
 ![Screenshot 0](https://devfolio-prod.s3.ap-south-1.amazonaws.com/hackathons/633065500193427091033d2cfc2621e6/projects/13242cc41ceb42308aa0e6ab6fcb1a84/961330ec-0453-4121-b115-92426dad77d7.png)
 
+## Hackaton project link
+
+The hackathon project will be judged based on its implementation and impact. If you find the project interesting and meaningful, I would truly appreciate it if you could give it a like ❤️
+
+Hackaton project [link](https://devfolio.co/projects/prayforua-charity-platform-2d3f)
+
 ## Video Presentation
 
 Check out our project presentation on YouTube: [Watch Video](https://youtu.be/Zk6X8abE_BU)
